@@ -1,0 +1,51 @@
+-to do-
+
+-------------------controls-------------------
+spin meter - separate panel
+
+-----------------Settings----------------------
+Cart Colour
+Player Colour
+Tee Model
+
+----------Vehicles-----------
+Carts
+
+-----------Inventory----------
+- Equippable items
+- Possible physical default clubs section
+
+------------------Environment-----------------
+
+flag - entity
+
+water hazards - map
+rough - map
+sand trap - map
+green - map
+
+--------------------Custom-------------------
+hitting sounds
+
+- Models
+	- Clubs - different designs
+	- Carts - different designs
+	- Flag - regular flag
+
+- World model
+	- Hold type
+	
+- View models
+	- Clubs
+		- Hide when looking above certain angle - pitch
+	
+------------------Clubs----------------------
+
+	Line as well?
+		
+	- Club stats
+
+	http://murdofrazer.com/golf-equipment/golf-clubs/golf-club-angles-and-distances
+	
+---Utilities---
+- Camera
