@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "tee/tee.vtf"
+	"$bumpmap"    "tee/tee_bump.vtf"
+	"$surfaceprop" "metal_bouncy"
+	"$model" 1
+}

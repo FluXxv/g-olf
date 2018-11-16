@@ -1,0 +1,8 @@
+"g-olf"
+{
+	"base"		"base"
+	"title"		"G-Olf"
+	"maps"		"^glf_"
+	"menusystem"	"1"
+	"workshopid"	""
+}

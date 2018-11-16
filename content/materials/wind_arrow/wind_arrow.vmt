@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "wind_arrow/wind_arrow.vtf"
+	"$surfaceprop" "metal_bouncy"
+	"$model" 1
+}
