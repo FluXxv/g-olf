@@ -6,7 +6,7 @@ local CHud = {
 	//"CHudChat",
 	"CHudHealth",
 	"CHudSecondaryAmmo",
-	"CHudWeaponSelection"
+	//"CHudWeaponSelection"
 }
 
 function HideHUD( name )
@@ -22,10 +22,6 @@ local GHUD = {
 	Ball = {},
 	Cart = {},
 	Club = {},
-	Materials = {
-		Circle_Frame = Material( "ghud/circle_frame.png" ),
-		Circle_Hollow_Frame = Material( "ghud/circle_hollow_frame.png" )
-	},
 	Mini_Map = {
 		Ball = Material( "icon8/minimap_ball.png" ),
 		Flag = Material( "icon16/minimap_flag.png" ),
@@ -40,26 +36,22 @@ local GHUD = {
 	Wind = {}
 }
 
-/*GHUD.Club.Panel = vgui.Create( "DPanel" )
-GHUD.Club.Panel:SetSize( ScrW() / 9, ScrH() / 5 )
+GHUD.Club.Panel = vgui.Create( "DPanel" )
+GHUD.Club.Panel:SetSize( ScrW() / 6, ScrH() / 4 )
 GHUD.Club.Panel:SetPos( ScrW() - GHUD.Club.Panel:GetWide() - 20, ScrH() - GHUD.Club.Panel:GetTall() - 20 )
-GHUD.Club.Panel:NoClipping( true )
-function GHUD.Club.Panel:Paint( w, h )
-	if !IsValid( LocalPlayer() ) then return end
-	
-	surface.SetDrawColor( 255, 255, 255, 255 )
-	surface.SetMaterial( GHUD.Materials.Circle_Frame )
-	surface.DrawTexturedRect( 0, 0, w, h )
-	
-	local weapon = LocalPlayer():GetActiveWeapon() ~= NULL && LocalPlayer():GetActiveWeapon():GetPrintName() or "None"
-	surface.SetFont( "Trebuchet18" )
-	local w_w, w_h = surface.GetTextSize( weapon )
-	draw.SimpleTextOutlined( weapon, "Trebuchet18", w - w - 4 - ( w_w / 2 ), h / 2, Color( 255, 255, 255 ), 1, 1, 1, Color( 0, 0, 0, 255 ) )
-end
 
-GHUD.Club.ModelPanel = vgui.Create( "DModelPanel", GHUD.Club.Panel )
-GHUD.Club.ModelPanel:SetSize( GHUD.Club.Panel:GetWide(), GHUD.Club.Panel:GetTall() )
-GHUD.Club.ModelPanel:Center()
+GHUD.Club.ModelOuter = vgui.Create( "DPanel", GHUD.Club.Panel )
+GHUD.Club.ModelOuter:SetSize( GHUD.Club.Panel:GetWide() / 2, GHUD.Club.Panel:GetTall() )
+GHUD.Club.ModelOuter:SetPos( GHUD.Club.Panel:GetWide() / 2, 0 )
+GHUD.Club.ModelOuter:SetBackgroundColor( Color( 0, 0, 0 ) )
+
+GHUD.Club.ModelInner = vgui.Create( "DPanel", GHUD.Club.ModelOuter )
+GHUD.Club.ModelInner:SetSize( GHUD.Club.ModelOuter:GetWide() - 2, GHUD.Club.ModelOuter:GetTall() - 2 )
+GHUD.Club.ModelInner:SetPos( 1, 1 )
+
+GHUD.Club.ModelPanel = vgui.Create( "DModelPanel", GHUD.Club.ModelInner )
+GHUD.Club.ModelPanel:SetSize( GHUD.Club.ModelInner:GetWide(), GHUD.Club.ModelInner:GetTall() )
+GHUD.Club.ModelPanel:SetPos( 0, 0 )
 GHUD.Club.ModelPanel:SetModel( "" )
 GHUD.Club.ModelPanel:SetLookAng( Angle( 0, 0, 0 ) )
 function GHUD.Club.ModelPanel:Think()
@@ -76,26 +68,67 @@ function GHUD.Club.ModelPanel:LayoutEntity( Entity )
 	Entity:SetAngles( Angle( 0, 90, 0 ) )
 	
 	return 
-end*/
-
-/*GHUD.Cart.Panel = vgui.Create( "DPanel" )
-GHUD.Cart.Panel.ClubPosX, GHUD.Cart.Panel.ClubPosY = GHUD.Club.Panel:GetPos()
-GHUD.Cart.Panel:SetSize( GHUD.Club.Panel:GetWide() / 2, GHUD.Club.Panel:GetTall() / 2 )
-GHUD.Cart.Panel:SetPos( GHUD.Cart.Panel.ClubPosX - GHUD.Cart.Panel:GetWide() / 3, GHUD.Cart.Panel.ClubPosY - GHUD.Cart.Panel:GetTall() / 3 )
-GHUD.Cart.Panel:MoveToBack()
-function GHUD.Cart.Panel:Paint( w, h )
-	surface.SetDrawColor( 255, 255, 255, 255 )
-	surface.SetMaterial( GHUD.Materials.Circle_Frame )
-	surface.DrawTexturedRect( 0, 0, w, h )
 end
+
+GHUD.Club.InfoOuter = vgui.Create( "DPanel", GHUD.Club.Panel )
+GHUD.Club.InfoOuter:SetSize( GHUD.Club.Panel:GetWide() / 2 + 1, GHUD.Club.Panel:GetTall() / 2 + 1 )
+GHUD.Club.InfoOuter:SetPos( 0, GHUD.Club.Panel:GetTall() / 2 - 1 )
+GHUD.Club.InfoOuter:SetBackgroundColor( Color( 0, 0, 0 ) )
+
+GHUD.Club.Info = vgui.Create( "DPanel", GHUD.Club.InfoOuter )
+GHUD.Club.Info:SetSize( GHUD.Club.InfoOuter:GetWide() - 2, GHUD.Club.InfoOuter:GetTall() - 2 )
+GHUD.Club.Info:SetPos( 1, 1 )
+
+GHUD.Club.Info.Name = vgui.Create( "DLabel", GHUD.Club.Info )
+GHUD.Club.Info.Name:SetPos( 0, 0 )
+GHUD.Club.Info.Name:SetSize( GHUD.Club.Info:GetWide(), 20 )
+GHUD.Club.Info.Name:SetContentAlignment( 5 )
+GHUD.Club.Info.Name:SetDark( true )
+GHUD.Club.Info.Name:SetFont( "Trebuchet18" )
+function GHUD.Club.Info.Name:Think()
+	if ( !IsValid( LocalPlayer() ) ) then return end
+	
+	local weapon = LocalPlayer():GetActiveWeapon() ~= NULL && LocalPlayer():GetActiveWeapon():GetPrintName() or "None"
+	
+	if ( GHUD.Club.Info.Name:GetText() ~= weapon ) then
+		GHUD.Club.Info.Name:SetText( weapon )
+	end
+end
+
+GHUD.Club.Info.Ping = vgui.Create( "DLabel", GHUD.Club.Info )
+GHUD.Club.Info.Ping:SetPos( 0, 0 )
+GHUD.Club.Info.Ping:SetSize( GHUD.Club.Info:GetWide(), 45 )
+GHUD.Club.Info.Ping:SetContentAlignment( 5 )
+GHUD.Club.Info.Ping:SetDark( true )
+GHUD.Club.Info.Ping:SetFont( "Trebuchet18" )
+function GHUD.Club.Info.Ping:Think()
+	if ( !IsValid( LocalPlayer() ) ) then return end
+	
+	if ( GHUD.Club.Info.Ping:GetText() ~= LocalPlayer():Ping() ) then
+		GHUD.Club.Info.Ping:SetText( LocalPlayer():Ping() )
+	end
+end
+
+GHUD.Cart.Panel = vgui.Create( "DPanel", GHUD.Club.Panel )
+GHUD.Cart.Panel:SetSize( GHUD.Club.Panel:GetWide() / 2, GHUD.Club.Panel:GetTall() / 2 )
+GHUD.Cart.Panel:SetPos( 0, 0 )
+GHUD.Cart.Panel:SetBackgroundColor( Color( 0, 0, 0 ) )
+
+GHUD.Cart.ModelInner = vgui.Create( "DPanel", GHUD.Cart.Panel )
+GHUD.Cart.ModelInner:SetSize( GHUD.Cart.Panel:GetWide() - 1, GHUD.Cart.Panel:GetTall() - 2 )
+GHUD.Cart.ModelInner:SetPos( 1, 1 )
 
 GHUD.Cart.ModelPanel = vgui.Create( "DModelPanel", GHUD.Cart.Panel )
 GHUD.Cart.ModelPanel:SetSize( GHUD.Cart.Panel:GetWide(), GHUD.Cart.Panel:GetTall() )
 GHUD.Cart.ModelPanel:Center()
-GHUD.Cart.ModelPanel:SetModel( "models/player/breen.mdl" )
-function GHUD.Cart.ModelPanel:LayoutEntity( Entity ) return end*/
+GHUD.Cart.ModelPanel:SetModel( "models/buggy.mdl" )
+function GHUD.Cart.ModelPanel:LayoutEntity( Entity )
+	GHUD.Cart.ModelPanel:SetCamPos( Entity:GetPos() - Vector( 150, 0, -50 ) )
+	
+	return 
+end
 
-/*GHUD.Mini_Map.Panel = vgui.Create( "DPanel" )
+GHUD.Mini_Map.Panel = vgui.Create( "DPanel" )
 GHUD.Mini_Map.Panel:SetSize( ScrW() / 7, ScrH() / 4 )
 GHUD.Mini_Map.Panel:SetPos( ScrW() - GHUD.Mini_Map.Panel:GetWide() - 20, 20 )
 function GHUD.Mini_Map.Panel:Paint( w, h )
@@ -129,7 +162,7 @@ function GHUD.Mini_Map.Panel:Paint( w, h )
 	surface.SetDrawColor( 255, 255, 255, 255 )
 		surface.SetMaterial( GHUD.Mini_Map.Pointer )
 		surface.DrawTexturedRectRotated( ( ( w / 2 ) - ( LocalPlayer():GetPos().y / w ) ), ( ( h / 2 ) - ( LocalPlayer():GetPos().x / h ) ), 32, 32, LocalPlayer():EyeAngles().y )
-end*/
+end
 
 /*GHUD.Mini_Map.Map = vgui.Create( "DImage", GHUD.Mini_Map.Panel )
 GHUD.Mini_Map.Map:SetSize( GHUD.Mini_Map.Panel:GetWide(), GHUD.Mini_Map.Panel:GetTall() )
@@ -160,17 +193,10 @@ function GHUD.Power_Meter.DImage:PaintOver( w, h )
 	surface.DrawTexturedRect( 0, 0, w, h )
 end
 
-/*GHUD.Spin.Panel = vgui.Create( "DPanel" )
-GHUD.Spin.Panel:SetSize( ScrW() / 9, ScrH() / 5 )
+GHUD.Spin.Panel = vgui.Create( "DPanel" )
+GHUD.Spin.Panel:SetSize( ScrW() / 5, ScrH() / 4 )
 GHUD.Spin.Panel:SetPos( 20, ScrH() - GHUD.Spin.Panel:GetTall() - 20 )
-GHUD.Spin.Panel:MoveToBack()
-function GHUD.Spin.Panel:Paint( w, h )
-	if !IsValid( LocalPlayer() ) then return end
-	
-	surface.SetDrawColor( 255, 255, 255, 255 )
-	surface.SetMaterial( GHUD.Materials.Circle_Frame )
-	surface.DrawTexturedRect( 0, 0, w, h )
-end
+GHUD.Spin.Panel:SetBackgroundColor( Color( 255, 255, 255, 0 ) )
 
 GHUD.Spin.ModelPanel = vgui.Create( "DModelPanel", GHUD.Spin.Panel )
 GHUD.Spin.ModelPanel:SetSize( GHUD.Spin.Panel:GetWide(), GHUD.Spin.Panel:GetTall() )
@@ -179,23 +205,11 @@ GHUD.Spin.ModelPanel:SetModel( "models/golf_ball/golf_ball.mdl" )
 GHUD.Spin.ModelPanel:SetLookAng( Angle( 0, 0, 0 ) )
 function GHUD.Spin.ModelPanel:LayoutEntity( Entity )
 	GHUD.Spin.ModelPanel:SetCamPos( Entity:GetPos() - Vector( 7, 0, 0 ) )
-	Entity:SetAngles( Angle( 0, 90, 0 ) )
 	
 	return 
-end*/
+end
 
-/*GHUD.Ball.Panel = vgui.Create( "DPanel" )
-GHUD.Ball.Panel.SpinPosX, GHUD.Ball.Panel.SpinPosY = GHUD.Spin.Panel:GetPos()
-GHUD.Ball.Panel:SetSize( GHUD.Spin.Panel:GetWide() / 2, GHUD.Spin.Panel:GetTall() / 2 )
-GHUD.Ball.Panel:SetPos( GHUD.Ball.Panel.SpinPosX + ( GHUD.Ball.Panel:GetWide() / 3 * 4 ), GHUD.Ball.Panel.SpinPosY - GHUD.Ball.Panel:GetTall() / 3 )
-GHUD.Ball.Panel:MoveToBack()
-function GHUD.Ball.Panel:Paint( w, h )
-	surface.SetDrawColor( 255, 255, 255, 255 )
-	surface.SetMaterial( GHUD.Materials.Circle_Frame )
-	surface.DrawTexturedRect( 0, 0, w, h )
-end*/
-
-GHUD.Weapon_Selection.Category_Labels = {
+/*GHUD.Weapon_Selection.Category_Labels = {
 	"Wood",
 	"Iron",
 	"Wedge",
@@ -375,7 +389,7 @@ hook.Add( "PlayerBindPress", "g-olf", function( ply, bind, pressed ) // if there
 			return true
 		end
 	end
-end )
+end )*/
 
 GHUD.Wind.ModelPanel = vgui.Create( "DModelPanel" )
 GHUD.Wind.ModelPanel:SetSize( ScrW() / 9, ScrH() / 5 )
