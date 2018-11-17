@@ -23,14 +23,6 @@ function ENT:Initialize()
 	self.Trail = util.SpriteTrail( self, 0, Color( 255, 255, 255 ), true, 2, 2, 1, 1 / ( 2 + 2 ) * 0.5, "sprites/laserbeam" )
 end
 
-function ENT:GravGunPickupAllowed( ply )
-	return false
-end
-
-function ENT:GravGunPunt( ply )
-	return false
-end
-
 function ENT:Think()
 	if ( !IsValid( self:GetOwner() ) ) then
 		if ( IsValid( self.Tee ) ) then

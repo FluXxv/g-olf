@@ -16,6 +16,7 @@
 			- Hole
 			- Distance to hole
 		- Power Bar
+			- Show range to hole
 		- Wind
 			- Arrow for direction
 			- Speed

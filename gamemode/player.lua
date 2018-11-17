@@ -31,6 +31,30 @@ function GM:PlayerLoadout( ply )
 	return true
 end
 
+function GM:GravGunPickupAllowed( ply, ent )
+	if ( !IsValid( ent ) or !IsValid( ply ) ) then return end
+	
+	if ( ent:GetClass() == "golf_ball" ) then
+		return false
+	end
+end
+
+function GM:GravGunPunt( ply, ent )
+	if ( !IsValid( ent ) or !IsValid( ply ) ) then return end
+	
+	if ( ent:GetClass() == "golf_ball" ) then
+		return false
+	end
+end
+
+function GM:PhysgunPickup( ply, ent )
+	if ( !IsValid( ent ) or !IsValid( ply ) ) then return end
+	
+	if ( ent:GetClass() == "golf_ball" ) then
+		return false
+	end
+end
+
 concommand.Add( "cart", function( ply ) // debugging for golf cart
 	if ( !IsValid( ply ) ) then return end
 	
