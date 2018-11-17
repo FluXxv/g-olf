@@ -1,51 +1,69 @@
--to do-
+// To Do
 
--------------------controls-------------------
-spin meter - separate panel
-
------------------Settings----------------------
-Cart Colour
-Player Colour
-Tee Model
-
-----------Vehicles-----------
-Carts
-
------------Inventory----------
-- Equippable items
-- Possible physical default clubs section
-
-------------------Environment-----------------
-
-flag - entity
-
-water hazards - map
-rough - map
-sand trap - map
-green - map
-
---------------------Custom-------------------
-hitting sounds
-
-- Models
-	- Clubs - different designs
-	- Carts - different designs
-	- Flag - regular flag
-
-- World model
-	- Hold type
+-Base-
+	- Player HUD
+		- Ball Spin
+			- Display ball with point to represent where it will be hit
+			- Press c to bring up panel where you can select where you want to hit the ball
+		- Club
+			- Display equipped club
+			- Club name
+		- Cart
+			- Display equipped cart
+		- Mini-Map
+			- Players
+			- Ball
+			- Hole
+			- Distance to hole
+		- Power Bar
+		- Wind
+			- Arrow for direction
+			- Speed
 	
-- View models
 	- Clubs
-		- Hide when looking above certain angle - pitch
-	
-------------------Clubs----------------------
-
-	Line as well?
+		- Reference material: http://murdofrazer.com/golf-equipment/golf-clubs/golf-club-angles-and-distances
+		- Club stats
+		- World models
+		- View models
+		- Hold type
+		- Hide view model when looking above a certain pitch angle, change hold type
 		
-	- Club stats
-
-	http://murdofrazer.com/golf-equipment/golf-clubs/golf-club-angles-and-distances
+	- Models
+		- Flag
+		
+	- Inventory
+		- Clubs
+			- Items
+			- Preview
+			- Statistics
+		- Balls
+			- Different ball designs
+			- Ball Colours
+		- Carts
+			- Items
+			- Preview
+			- Cart Colour
+			- Statistics
+		- Outfit
+			- Different clothes, hats etc
+			- Display
+			- Player Colour
+		- Settings
+			- Player Names
+			- Swing Direction
 	
----Utilities---
-- Camera
+	- Map
+		- Green
+		- Rough
+		- Water Hazards
+		- Sand Traps
+		- Out of Bounds
+		- Wind
+		
+-After Base-
+	- Models
+		- Custom tee models
+		- Custom clubs
+
+	- Vehicles
+		- Carts
