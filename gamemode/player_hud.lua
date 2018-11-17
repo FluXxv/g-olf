@@ -31,7 +31,10 @@ local GHUD = {
 		Flag = Material( "icon16/minimap_flag.png" ),
 		Pointer = Material( "icon32/minimap_pointer_arrow.png" )
 	},
-	Power_Meter = {},
+	Power_Meter = {
+		Bar_BG = Material( "ghud/bar_bg.png" ),
+		Bar_FG = Material( "ghud/bar_fg.png" )
+	},
 	Spin = {},
 	Weapon_Selection = {},
 	Wind = {}
@@ -92,7 +95,7 @@ GHUD.Cart.ModelPanel:Center()
 GHUD.Cart.ModelPanel:SetModel( "models/player/breen.mdl" )
 function GHUD.Cart.ModelPanel:LayoutEntity( Entity ) return end*/
 
-GHUD.Mini_Map.Panel = vgui.Create( "DPanel" )
+/*GHUD.Mini_Map.Panel = vgui.Create( "DPanel" )
 GHUD.Mini_Map.Panel:SetSize( ScrW() / 7, ScrH() / 4 )
 GHUD.Mini_Map.Panel:SetPos( ScrW() - GHUD.Mini_Map.Panel:GetWide() - 20, 20 )
 function GHUD.Mini_Map.Panel:Paint( w, h )
@@ -126,7 +129,7 @@ function GHUD.Mini_Map.Panel:Paint( w, h )
 	surface.SetDrawColor( 255, 255, 255, 255 )
 		surface.SetMaterial( GHUD.Mini_Map.Pointer )
 		surface.DrawTexturedRectRotated( ( ( w / 2 ) - ( LocalPlayer():GetPos().y / w ) ), ( ( h / 2 ) - ( LocalPlayer():GetPos().x / h ) ), 32, 32, LocalPlayer():EyeAngles().y )
-end
+end*/
 
 /*GHUD.Mini_Map.Map = vgui.Create( "DImage", GHUD.Mini_Map.Panel )
 GHUD.Mini_Map.Map:SetSize( GHUD.Mini_Map.Panel:GetWide(), GHUD.Mini_Map.Panel:GetTall() )
@@ -134,24 +137,27 @@ GHUD.Mini_Map.Map:SetPos( 0, 0 )
 GHUD.Mini_Map.Map:SetKeepAspect( false )
 GHUD.Mini_Map.Map:SetImage( "overviews/de_inferno" )*/
 
-GHUD.Power_Meter.Panel = vgui.Create( "DPanel" )
-GHUD.Power_Meter.Panel:SetSize( ScrW() / 1.8, ScrH() / 28 )
-GHUD.Power_Meter.Panel:SetPos( ScrW() / 2 - GHUD.Power_Meter.Panel:GetWide() / 2, ScrH() - GHUD.Power_Meter.Panel:GetTall() * 2 )
-GHUD.Power_Meter.Panel.Last_Hit_Power = 0
-function GHUD.Power_Meter.Panel:Paint( w, h )
+GHUD.Power_Meter.DImage = vgui.Create( "DImage" )
+GHUD.Power_Meter.DImage:SetSize( ScrW() / 1.8, 64 )
+GHUD.Power_Meter.DImage:SetPos( ScrW() / 2 - GHUD.Power_Meter.DImage:GetWide() / 2, ScrH() - GHUD.Power_Meter.DImage:GetTall() - 20 )
+GHUD.Power_Meter.DImage:SetKeepAspect( false )
+GHUD.Power_Meter.DImage:SetImage( "ghud/bar_bg.png" )
+function GHUD.Power_Meter.DImage:PaintOver( w, h )
 	if ( !IsValid( LocalPlayer() ) ) then return end
-	
-	draw.RoundedBox( 20, 0, 0, w, h, Color( 0, 0, 0 ) )
-	draw.RoundedBox( 20, 1, 1, w - 2, h - 2, Color( 255, 255, 255 ) )
 	
 	if ( LocalPlayer():GetActiveWeapon() == NULL ) then return end
 	if ( LocalPlayer():GetActiveWeapon().GetHitPower == nil ) then return end
 	
 	local Hit_Power = LocalPlayer():GetActiveWeapon():GetHitPower()
 	local Max_Power = LocalPlayer():GetActiveWeapon():GetMaxPower()
-	local Power_Meter = Hit_Power / Max_Power * ( w - 2 )
+	local Power_Meter = Hit_Power / Max_Power * ( w - 64 )
 	
-	draw.RoundedBox( 20, 1, 1, Power_Meter, h - 2, Color( 255, 100, 100 ) )
+	surface.SetDrawColor( Color( 255, 100, 100 ) )
+	surface.DrawRect( 32, 1, Power_Meter, h - 2 )
+	
+	surface.SetDrawColor( 255, 255, 255, 255 )
+	surface.SetMaterial( GHUD.Power_Meter.Bar_FG )
+	surface.DrawTexturedRect( 0, 0, w, h )
 end
 
 /*GHUD.Spin.Panel = vgui.Create( "DPanel" )
