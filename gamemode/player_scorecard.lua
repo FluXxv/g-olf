@@ -45,6 +45,17 @@ function Scorecard.Header.Time:Think()
 	end
 end
 
+Scorecard.Header.Ping = vgui.Create( "DLabel", Scorecard.Header )
+Scorecard.Header.Ping:SetSize( Scorecard.Header:GetWide(), Scorecard.Header:GetTall() )
+Scorecard.Header.Ping:SetPos( -5, -5 )
+Scorecard.Header.Ping:SetContentAlignment( 3 )
+Scorecard.Header.Ping:SetDark( true )
+Scorecard.Header.Ping:SetFont( "GModNotify" )
+function Scorecard.Header.Ping:Think()
+	if ( Scorecard.Header.Ping:GetValue( 2 ) ~= LocalPlayer():Ping() ) then
+		Scorecard.Header.Ping:SetText( "Ping: " .. LocalPlayer():Ping() )
+	end
+end
 
 Scorecard.Course_Card_Hole = vgui.Create( "DPanel", Scorecard )
 Scorecard.Course_Card_Hole:SetSize( Scorecard:GetWide(), Scorecard:GetTall() / 20 )

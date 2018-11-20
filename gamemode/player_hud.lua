@@ -109,20 +109,6 @@ function GHUD.Club.Info.FPS:Think()
 	end
 end
 
-GHUD.Club.Info.Ping = vgui.Create( "DLabel", GHUD.Club.Info )
-GHUD.Club.Info.Ping:SetPos( 0, GHUD.Club.Info:GetTall() - 30 )
-GHUD.Club.Info.Ping:SetSize( GHUD.Club.Info:GetWide(), 45 )
-GHUD.Club.Info.Ping:SetContentAlignment( 5 )
-GHUD.Club.Info.Ping:SetDark( true )
-GHUD.Club.Info.Ping:SetFont( "Trebuchet18" )
-function GHUD.Club.Info.Ping:Think()
-	if ( !IsValid( LocalPlayer() ) ) then return end
-	
-	if ( GHUD.Club.Info.Ping:GetValue( 2 ) ~= LocalPlayer():Ping() ) then
-		GHUD.Club.Info.Ping:SetText( "Ping: " .. LocalPlayer():Ping() )
-	end
-end
-
 GHUD.Cart.Panel = vgui.Create( "DPanel", GHUD.Club.Panel )
 GHUD.Cart.Panel:SetSize( GHUD.Club.Panel:GetWide() / 2, GHUD.Club.Panel:GetTall() / 2 )
 GHUD.Cart.Panel:SetPos( 0, 0 )
