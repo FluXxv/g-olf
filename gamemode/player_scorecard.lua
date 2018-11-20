@@ -33,6 +33,19 @@ Scorecard.Header.Map_Name:SetDark( true )
 Scorecard.Header.Map_Name:SetFont( "GModNotify" )
 Scorecard.Header.Map_Name:SetText( game.GetMap() )
 
+Scorecard.Header.Time = vgui.Create( "DLabel", Scorecard.Header )
+Scorecard.Header.Time:SetSize( Scorecard.Header:GetWide(), Scorecard.Header:GetTall() )
+Scorecard.Header.Time:SetPos( -5, 0 )
+Scorecard.Header.Time:SetContentAlignment( 9 )
+Scorecard.Header.Time:SetDark( true )
+Scorecard.Header.Time:SetFont( "GModNotify" )
+function Scorecard.Header.Time:Think()
+	if ( Scorecard.Header.Time:GetText() ~= os.date( "%d/%m/%Y - %H:%M:%S", os.time() ) ) then
+		Scorecard.Header.Time:SetText( os.date( "%d/%m/%Y - %H:%M:%S", os.time() ) )
+	end
+end
+
+
 Scorecard.Course_Card_Hole = vgui.Create( "DPanel", Scorecard )
 Scorecard.Course_Card_Hole:SetSize( Scorecard:GetWide(), Scorecard:GetTall() / 20 )
 Scorecard.Course_Card_Hole:SetPos( 0, Scorecard:GetTall() / 10 )

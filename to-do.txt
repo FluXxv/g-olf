@@ -11,8 +11,6 @@
 		- Cart
 			- Display equipped cart
 		- Mini-Map
-			- Players
-			- Ball
 			- Hole
 			- Distance to hole
 		- Power Bar

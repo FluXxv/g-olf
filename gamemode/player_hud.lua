@@ -95,8 +95,22 @@ function GHUD.Club.Info.Name:Think()
 	end
 end
 
+GHUD.Club.Info.FPS = vgui.Create( "DLabel", GHUD.Club.Info )
+GHUD.Club.Info.FPS:SetPos( 0, GHUD.Club.Info:GetTall() - 44 )
+GHUD.Club.Info.FPS:SetSize( GHUD.Club.Info:GetWide(), 45 )
+GHUD.Club.Info.FPS:SetContentAlignment( 5 )
+GHUD.Club.Info.FPS:SetDark( true )
+GHUD.Club.Info.FPS:SetFont( "Trebuchet18" )
+function GHUD.Club.Info.FPS:Think()
+	if ( !IsValid( LocalPlayer() ) ) then return end
+	
+	if ( GHUD.Club.Info.FPS:GetValue( 2 ) ~= math.Round( 1 / RealFrameTime() ) ) then
+		GHUD.Club.Info.FPS:SetText( "FPS: " .. math.Round( 1 / RealFrameTime() ) )
+	end
+end
+
 GHUD.Club.Info.Ping = vgui.Create( "DLabel", GHUD.Club.Info )
-GHUD.Club.Info.Ping:SetPos( 0, 0 )
+GHUD.Club.Info.Ping:SetPos( 0, GHUD.Club.Info:GetTall() - 30 )
 GHUD.Club.Info.Ping:SetSize( GHUD.Club.Info:GetWide(), 45 )
 GHUD.Club.Info.Ping:SetContentAlignment( 5 )
 GHUD.Club.Info.Ping:SetDark( true )
@@ -104,8 +118,8 @@ GHUD.Club.Info.Ping:SetFont( "Trebuchet18" )
 function GHUD.Club.Info.Ping:Think()
 	if ( !IsValid( LocalPlayer() ) ) then return end
 	
-	if ( GHUD.Club.Info.Ping:GetText() ~= LocalPlayer():Ping() ) then
-		GHUD.Club.Info.Ping:SetText( LocalPlayer():Ping() )
+	if ( GHUD.Club.Info.Ping:GetValue( 2 ) ~= LocalPlayer():Ping() ) then
+		GHUD.Club.Info.Ping:SetText( "Ping: " .. LocalPlayer():Ping() )
 	end
 end
 
@@ -170,12 +184,12 @@ GHUD.Mini_Map.Map:SetPos( 0, 0 )
 GHUD.Mini_Map.Map:SetKeepAspect( false )
 GHUD.Mini_Map.Map:SetImage( "overviews/de_inferno" )*/
 
-GHUD.Power_Meter.DImage = vgui.Create( "DImage" )
-GHUD.Power_Meter.DImage:SetSize( ScrW() / 1.8, 64 )
-GHUD.Power_Meter.DImage:SetPos( ScrW() / 2 - GHUD.Power_Meter.DImage:GetWide() / 2, ScrH() - GHUD.Power_Meter.DImage:GetTall() - 20 )
-GHUD.Power_Meter.DImage:SetKeepAspect( false )
-GHUD.Power_Meter.DImage:SetImage( "ghud/bar_bg.png" )
-function GHUD.Power_Meter.DImage:PaintOver( w, h )
+GHUD.Power_Meter.Background = vgui.Create( "DImage" )
+GHUD.Power_Meter.Background:SetSize( ScrW() / 1.8, 64 )
+GHUD.Power_Meter.Background:SetPos( ScrW() / 2 - GHUD.Power_Meter.Background:GetWide() / 2, ScrH() - GHUD.Power_Meter.Background:GetTall() - 20 )
+GHUD.Power_Meter.Background:SetKeepAspect( false )
+GHUD.Power_Meter.Background:SetImage( "ghud/bar_bg.png" )
+function GHUD.Power_Meter.Background:PaintOver( w, h )
 	if ( !IsValid( LocalPlayer() ) ) then return end
 	
 	if ( LocalPlayer():GetActiveWeapon() == NULL ) then return end
@@ -187,11 +201,13 @@ function GHUD.Power_Meter.DImage:PaintOver( w, h )
 	
 	surface.SetDrawColor( Color( 255, 100, 100 ) )
 	surface.DrawRect( 32, 1, Power_Meter, h - 2 )
-	
-	surface.SetDrawColor( 255, 255, 255, 255 )
-	surface.SetMaterial( GHUD.Power_Meter.Bar_FG )
-	surface.DrawTexturedRect( 0, 0, w, h )
 end
+
+GHUD.Power_Meter.Foreground = vgui.Create( "DImage" )
+GHUD.Power_Meter.Foreground:SetSize( ScrW() / 1.8, 64 )
+GHUD.Power_Meter.Foreground:SetPos( ScrW() / 2 - GHUD.Power_Meter.Foreground:GetWide() / 2, ScrH() - GHUD.Power_Meter.Foreground:GetTall() - 20 )
+GHUD.Power_Meter.Foreground:SetKeepAspect( false )
+GHUD.Power_Meter.Foreground:SetImage( "ghud/bar_fg.png" )
 
 GHUD.Spin.Panel = vgui.Create( "DPanel" )
 GHUD.Spin.Panel:SetSize( ScrW() / 5, ScrH() / 4 )
@@ -408,7 +424,6 @@ function GHUD.Wind.ModelPanel:LayoutEntity( Entity )
 end
 
 local function Golf_HUD()
-	/*Player Names*/
 	if ( g_olf.Show_Names ) then
 		for k, v in pairs( player.GetAll() ) do
 			if !IsValid( v ) then continue end
