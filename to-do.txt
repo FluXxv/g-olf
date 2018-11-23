@@ -14,6 +14,7 @@
 			- Hole
 			- Distance to hole
 		- Power Bar
+			- Show last hit
 			- Show range to hole
 		- Wind
 			- Arrow for direction
@@ -63,6 +64,32 @@
 	- Models
 		- Custom tee models
 		- Custom clubs
+		
+	- Notifications
+		- Sinking the ball
+			- Hole in One
+			- Albatross
+			- Eagle
+			- Birdie
+			- Par
+			- Bogey
+			- Double Bogey
+			- Triple Bogey
+			- 4x Bogey - numbers from here up to 13
+			
+		- Hitting
+			- Nice Hit!
+			- Nice On!
+			
+		- Terrain
+			- Fair
+			- Green
+			- Rough
+			- Bunker
+			- Out of Bounds
+	
+	- Sounds
+		- Custom sounds
 
 	- Vehicles
 		- Carts

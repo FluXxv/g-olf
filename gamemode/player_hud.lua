@@ -28,8 +28,7 @@ local GHUD = {
 		Pointer = Material( "icon32/minimap_pointer_arrow.png" )
 	},
 	Power_Meter = {
-		Bar_BG = Material( "ghud/bar_bg.png" ),
-		Bar_FG = Material( "ghud/bar_fg.png" )
+		Bar = Material( "ghud/bar.png" ),
 	},
 	Spin = {},
 	Weapon_Selection = {},
@@ -96,7 +95,7 @@ function GHUD.Club.Info.Name:Think()
 end
 
 GHUD.Club.Info.FPS = vgui.Create( "DLabel", GHUD.Club.Info )
-GHUD.Club.Info.FPS:SetPos( 0, GHUD.Club.Info:GetTall() - 44 )
+GHUD.Club.Info.FPS:SetPos( 0, GHUD.Club.Info:GetTall() - 30 )
 GHUD.Club.Info.FPS:SetSize( GHUD.Club.Info:GetWide(), 45 )
 GHUD.Club.Info.FPS:SetContentAlignment( 5 )
 GHUD.Club.Info.FPS:SetDark( true )
@@ -170,12 +169,10 @@ GHUD.Mini_Map.Map:SetPos( 0, 0 )
 GHUD.Mini_Map.Map:SetKeepAspect( false )
 GHUD.Mini_Map.Map:SetImage( "overviews/de_inferno" )*/
 
-GHUD.Power_Meter.Background = vgui.Create( "DImage" )
-GHUD.Power_Meter.Background:SetSize( ScrW() / 1.8, 64 )
-GHUD.Power_Meter.Background:SetPos( ScrW() / 2 - GHUD.Power_Meter.Background:GetWide() / 2, ScrH() - GHUD.Power_Meter.Background:GetTall() - 20 )
-GHUD.Power_Meter.Background:SetKeepAspect( false )
-GHUD.Power_Meter.Background:SetImage( "ghud/bar_bg.png" )
-function GHUD.Power_Meter.Background:PaintOver( w, h )
+GHUD.Power_Meter.Panel = vgui.Create( "DPanel" )
+GHUD.Power_Meter.Panel:SetSize( ScrW() / 1.8, 48 )
+GHUD.Power_Meter.Panel:SetPos( ScrW() / 2 - GHUD.Power_Meter.Panel:GetWide() / 2, ScrH() - ( GHUD.Power_Meter.Panel:GetTall() * 2.5 ) )
+function GHUD.Power_Meter.Panel:Paint( w, h )
 	if ( !IsValid( LocalPlayer() ) ) then return end
 	
 	if ( LocalPlayer():GetActiveWeapon() == NULL ) then return end
@@ -183,17 +180,17 @@ function GHUD.Power_Meter.Background:PaintOver( w, h )
 	
 	local Hit_Power = LocalPlayer():GetActiveWeapon():GetHitPower()
 	local Max_Power = LocalPlayer():GetActiveWeapon():GetMaxPower()
-	local Power_Meter = Hit_Power / Max_Power * ( w - 64 )
+	local Power_Meter = Hit_Power / Max_Power * ( w - 48 )
 	
 	surface.SetDrawColor( Color( 255, 100, 100 ) )
-	surface.DrawRect( 32, 1, Power_Meter, h - 2 )
+	surface.DrawRect( 24, 1, Power_Meter, h - 2 )
 end
 
-GHUD.Power_Meter.Foreground = vgui.Create( "DImage" )
-GHUD.Power_Meter.Foreground:SetSize( ScrW() / 1.8, 64 )
-GHUD.Power_Meter.Foreground:SetPos( ScrW() / 2 - GHUD.Power_Meter.Foreground:GetWide() / 2, ScrH() - GHUD.Power_Meter.Foreground:GetTall() - 20 )
-GHUD.Power_Meter.Foreground:SetKeepAspect( false )
-GHUD.Power_Meter.Foreground:SetImage( "ghud/bar_fg.png" )
+GHUD.Power_Meter.Bar = vgui.Create( "DImage" )
+GHUD.Power_Meter.Bar:SetSize( ScrW() / 1.8, 48 )
+GHUD.Power_Meter.Bar:SetPos( ScrW() / 2 - GHUD.Power_Meter.Bar:GetWide() / 2, ScrH() - ( GHUD.Power_Meter.Bar:GetTall() * 2.5 ) )
+GHUD.Power_Meter.Bar:SetKeepAspect( false )
+GHUD.Power_Meter.Bar:SetImage( "ghud/bar.png" )
 
 GHUD.Spin.Panel = vgui.Create( "DPanel" )
 GHUD.Spin.Panel:SetSize( ScrW() / 5, ScrH() / 4 )
@@ -400,11 +397,16 @@ GHUD.Wind.ModelPanel:SetModel( "models/wind_arrow/wind_arrow.mdl" )
 GHUD.Wind.ModelPanel:SetColor( Color( 255, 100, 100 ) )
 GHUD.Wind.ModelPanel:SetLookAng( Angle( 0, 0, 0 ) )
 function GHUD.Wind.ModelPanel:LayoutEntity( Entity )
-	if ( !IsValid( LocalPlayer().Golf_Ball ) ) then return end
+	local ent = nil
 	
-	GHUD.Wind.ModelPanel:SetCamPos( Entity:GetPos() - Vector( 9, 0, 0 ) )
+	for k, v in pairs( ents.FindByClass( "golf_ball" ) ) do
+		if ( !IsValid( v ) ) then continue end
+		if ( v:GetOwner() ~= LocalPlayer() ) then continue end
+		
+		GHUD.Wind.ModelPanel:SetCamPos( Entity:GetPos() - Vector( 9, 0, 0 ) )
 	
-	Entity:SetAngles( ( LocalPlayer():GetPos() - LocalPlayer().Golf_Ball:GetPos() ):Angle() - Angle( 90, LocalPlayer():GetAngles().y, 0 ) )
+		Entity:SetAngles( ( LocalPlayer():GetPos() - v:GetPos() ):Angle() - Angle( 90, LocalPlayer():GetAngles().y, 0 ) )
+	end
 	
 	return
 end
