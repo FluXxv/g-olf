@@ -88,6 +88,9 @@ function SWEP:PrimaryAttack()
 					ent.FirstHit = true
 					
 					ent:EmitSound( Hit_Sound, 100, 100 )
+					if ( self:GetHitPower() >= self:GetMaxPower() - 25 ) then
+						self.Owner:PrintMessage( HUD_PRINTTALK, "Nice hit!" )
+					end
 				end
 			end
 			

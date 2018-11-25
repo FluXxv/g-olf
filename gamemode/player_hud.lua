@@ -16,12 +16,9 @@ function HideHUD( name )
 end
 hook.Add( "HUDShouldDraw", "HideHUD", HideHUD )
 
-/*Client HUD*/
-
 local GHUD = {
 	Ball = {},
-	Cart = {},
-	Club = {},
+	Equipment = {},
 	Mini_Map = {
 		Ball = Material( "icon8/minimap_ball.png" ),
 		Flag = Material( "icon16/minimap_flag.png" ),
@@ -35,96 +32,34 @@ local GHUD = {
 	Wind = {}
 }
 
-GHUD.Club.Panel = vgui.Create( "DPanel" )
-GHUD.Club.Panel:SetSize( ScrW() / 6, ScrH() / 4 )
-GHUD.Club.Panel:SetPos( ScrW() - GHUD.Club.Panel:GetWide() - 20, ScrH() - GHUD.Club.Panel:GetTall() - 20 )
+GHUD.Equipment.Image = vgui.Create( "DImage" )
+GHUD.Equipment.Image:SetSize( ScrW() / 8, ScrH() / 5 )
+GHUD.Equipment.Image:SetPos( ScrW() - GHUD.Equipment.Image:GetWide() * 1.3, ScrH() - GHUD.Equipment.Image:GetTall() - 20 )
+GHUD.Equipment.Image:SetKeepAspect( false )
+GHUD.Equipment.Image:SetImage( "ghud/equipment.png" )
 
-GHUD.Club.ModelOuter = vgui.Create( "DPanel", GHUD.Club.Panel )
-GHUD.Club.ModelOuter:SetSize( GHUD.Club.Panel:GetWide() / 2, GHUD.Club.Panel:GetTall() )
-GHUD.Club.ModelOuter:SetPos( GHUD.Club.Panel:GetWide() / 2, 0 )
-GHUD.Club.ModelOuter:SetBackgroundColor( Color( 0, 0, 0 ) )
-
-GHUD.Club.ModelInner = vgui.Create( "DPanel", GHUD.Club.ModelOuter )
-GHUD.Club.ModelInner:SetSize( GHUD.Club.ModelOuter:GetWide() - 2, GHUD.Club.ModelOuter:GetTall() - 2 )
-GHUD.Club.ModelInner:SetPos( 1, 1 )
-
-GHUD.Club.ModelPanel = vgui.Create( "DModelPanel", GHUD.Club.ModelInner )
-GHUD.Club.ModelPanel:SetSize( GHUD.Club.ModelInner:GetWide(), GHUD.Club.ModelInner:GetTall() )
-GHUD.Club.ModelPanel:SetPos( 0, 0 )
-GHUD.Club.ModelPanel:SetModel( "" )
-GHUD.Club.ModelPanel:SetLookAng( Angle( 0, 0, 0 ) )
-function GHUD.Club.ModelPanel:Think()
+GHUD.Equipment.Label = vgui.Create( "DLabel", GHUD.Equipment.Image )
+GHUD.Equipment.Label:SetSize( GHUD.Equipment.Image:GetWide(), GHUD.Equipment.Image:GetTall() / 4 )
+GHUD.Equipment.Label:SetPos( 0, GHUD.Equipment.Image:GetTall() - GHUD.Equipment.Label:GetTall() + 4 )
+GHUD.Equipment.Label:SetDark( true )
+GHUD.Equipment.Label:SetFont( "GModNotify" )
+GHUD.Equipment.Label:SetContentAlignment( 5 )
+function GHUD.Equipment.Label:Think()
 	if ( !IsValid( LocalPlayer() ) ) then return end
 	
-	if ( LocalPlayer():GetActiveWeapon() ~= NULL && GHUD.Club.ModelPanel:GetModel() ~= LocalPlayer():GetActiveWeapon():GetModel() ) then
-		GHUD.Club.ModelPanel:SetModel( LocalPlayer():GetActiveWeapon():GetModel() )
-	elseif ( LocalPlayer():GetActiveWeapon() == NULL && GHUD.Club.ModelPanel:GetEntity() ~= nil ) then
-		GHUD.Club.ModelPanel:SetModel( "" )
+	if ( LocalPlayer():InVehicle() ) then
+		if ( !IsValid( LocalPlayer():GetVehicle() ) ) then return end
+		
+		if ( GHUD.Equipment.Label:GetText() ~= LocalPlayer():GetClass() ) then
+			GHUD.Equipment.Label:SetText( LocalPlayer():GetVehicle():GetClass() )
+		end
+	else
+		local Weapon = LocalPlayer():GetActiveWeapon() ~= NULL && LocalPlayer():GetActiveWeapon():GetPrintName() or "None"
+		
+		if ( GHUD.Equipment.Label:GetText() ~= Weapon ) then
+			GHUD.Equipment.Label:SetText( Weapon )
+		end
 	end
-end
-function GHUD.Club.ModelPanel:LayoutEntity( Entity )
-	GHUD.Club.ModelPanel:SetCamPos( Entity:GetPos() - Vector( 20, 2, 0 ) )
-	Entity:SetAngles( Angle( 0, 90, 0 ) )
-	
-	return 
-end
-
-GHUD.Club.InfoOuter = vgui.Create( "DPanel", GHUD.Club.Panel )
-GHUD.Club.InfoOuter:SetSize( GHUD.Club.Panel:GetWide() / 2 + 1, GHUD.Club.Panel:GetTall() / 2 + 1 )
-GHUD.Club.InfoOuter:SetPos( 0, GHUD.Club.Panel:GetTall() / 2 - 1 )
-GHUD.Club.InfoOuter:SetBackgroundColor( Color( 0, 0, 0 ) )
-
-GHUD.Club.Info = vgui.Create( "DPanel", GHUD.Club.InfoOuter )
-GHUD.Club.Info:SetSize( GHUD.Club.InfoOuter:GetWide() - 2, GHUD.Club.InfoOuter:GetTall() - 2 )
-GHUD.Club.Info:SetPos( 1, 1 )
-
-GHUD.Club.Info.Name = vgui.Create( "DLabel", GHUD.Club.Info )
-GHUD.Club.Info.Name:SetPos( 0, 0 )
-GHUD.Club.Info.Name:SetSize( GHUD.Club.Info:GetWide(), 20 )
-GHUD.Club.Info.Name:SetContentAlignment( 5 )
-GHUD.Club.Info.Name:SetDark( true )
-GHUD.Club.Info.Name:SetFont( "Trebuchet18" )
-function GHUD.Club.Info.Name:Think()
-	if ( !IsValid( LocalPlayer() ) ) then return end
-	
-	local weapon = LocalPlayer():GetActiveWeapon() ~= NULL && LocalPlayer():GetActiveWeapon():GetPrintName() or "None"
-	
-	if ( GHUD.Club.Info.Name:GetText() ~= weapon ) then
-		GHUD.Club.Info.Name:SetText( weapon )
-	end
-end
-
-GHUD.Club.Info.FPS = vgui.Create( "DLabel", GHUD.Club.Info )
-GHUD.Club.Info.FPS:SetPos( 0, GHUD.Club.Info:GetTall() - 30 )
-GHUD.Club.Info.FPS:SetSize( GHUD.Club.Info:GetWide(), 45 )
-GHUD.Club.Info.FPS:SetContentAlignment( 5 )
-GHUD.Club.Info.FPS:SetDark( true )
-GHUD.Club.Info.FPS:SetFont( "Trebuchet18" )
-function GHUD.Club.Info.FPS:Think()
-	if ( !IsValid( LocalPlayer() ) ) then return end
-	
-	if ( GHUD.Club.Info.FPS:GetValue( 2 ) ~= math.Round( 1 / RealFrameTime() ) ) then
-		GHUD.Club.Info.FPS:SetText( "FPS: " .. math.Round( 1 / RealFrameTime() ) )
-	end
-end
-
-GHUD.Cart.Panel = vgui.Create( "DPanel", GHUD.Club.Panel )
-GHUD.Cart.Panel:SetSize( GHUD.Club.Panel:GetWide() / 2, GHUD.Club.Panel:GetTall() / 2 )
-GHUD.Cart.Panel:SetPos( 0, 0 )
-GHUD.Cart.Panel:SetBackgroundColor( Color( 0, 0, 0 ) )
-
-GHUD.Cart.ModelInner = vgui.Create( "DPanel", GHUD.Cart.Panel )
-GHUD.Cart.ModelInner:SetSize( GHUD.Cart.Panel:GetWide() - 1, GHUD.Cart.Panel:GetTall() - 2 )
-GHUD.Cart.ModelInner:SetPos( 1, 1 )
-
-GHUD.Cart.ModelPanel = vgui.Create( "DModelPanel", GHUD.Cart.Panel )
-GHUD.Cart.ModelPanel:SetSize( GHUD.Cart.Panel:GetWide(), GHUD.Cart.Panel:GetTall() )
-GHUD.Cart.ModelPanel:Center()
-GHUD.Cart.ModelPanel:SetModel( "models/buggy.mdl" )
-function GHUD.Cart.ModelPanel:LayoutEntity( Entity )
-	GHUD.Cart.ModelPanel:SetCamPos( Entity:GetPos() - Vector( 150, 0, -50 ) )
-	
-	return 
 end
 
 GHUD.Mini_Map.Panel = vgui.Create( "DPanel" )
@@ -171,7 +106,7 @@ GHUD.Mini_Map.Map:SetImage( "overviews/de_inferno" )*/
 
 GHUD.Power_Meter.Panel = vgui.Create( "DPanel" )
 GHUD.Power_Meter.Panel:SetSize( ScrW() / 1.8, 48 )
-GHUD.Power_Meter.Panel:SetPos( ScrW() / 2 - GHUD.Power_Meter.Panel:GetWide() / 2, ScrH() - ( GHUD.Power_Meter.Panel:GetTall() * 2.5 ) )
+GHUD.Power_Meter.Panel:SetPos( ScrW() / 2 - GHUD.Power_Meter.Panel:GetWide() / 2, ScrH() - ( GHUD.Power_Meter.Panel:GetTall() * 2 ) )
 function GHUD.Power_Meter.Panel:Paint( w, h )
 	if ( !IsValid( LocalPlayer() ) ) then return end
 	
@@ -188,25 +123,15 @@ end
 
 GHUD.Power_Meter.Bar = vgui.Create( "DImage" )
 GHUD.Power_Meter.Bar:SetSize( ScrW() / 1.8, 48 )
-GHUD.Power_Meter.Bar:SetPos( ScrW() / 2 - GHUD.Power_Meter.Bar:GetWide() / 2, ScrH() - ( GHUD.Power_Meter.Bar:GetTall() * 2.5 ) )
+GHUD.Power_Meter.Bar:SetPos( ScrW() / 2 - GHUD.Power_Meter.Bar:GetWide() / 2, ScrH() - ( GHUD.Power_Meter.Bar:GetTall() * 2 ) )
 GHUD.Power_Meter.Bar:SetKeepAspect( false )
 GHUD.Power_Meter.Bar:SetImage( "ghud/bar.png" )
 
-GHUD.Spin.Panel = vgui.Create( "DPanel" )
-GHUD.Spin.Panel:SetSize( ScrW() / 5, ScrH() / 4 )
-GHUD.Spin.Panel:SetPos( 20, ScrH() - GHUD.Spin.Panel:GetTall() - 20 )
-GHUD.Spin.Panel:SetBackgroundColor( Color( 255, 255, 255, 0 ) )
-
-GHUD.Spin.ModelPanel = vgui.Create( "DModelPanel", GHUD.Spin.Panel )
-GHUD.Spin.ModelPanel:SetSize( GHUD.Spin.Panel:GetWide(), GHUD.Spin.Panel:GetTall() )
-GHUD.Spin.ModelPanel:Center()
-GHUD.Spin.ModelPanel:SetModel( "models/golf_ball/golf_ball.mdl" )
-GHUD.Spin.ModelPanel:SetLookAng( Angle( 0, 0, 0 ) )
-function GHUD.Spin.ModelPanel:LayoutEntity( Entity )
-	GHUD.Spin.ModelPanel:SetCamPos( Entity:GetPos() - Vector( 7, 0, 0 ) )
-	
-	return 
-end
+GHUD.Spin.Image = vgui.Create( "DImage" )
+GHUD.Spin.Image:SetSize( ScrW() / 9, ScrW() / 9 )
+GHUD.Spin.Image:SetPos( GHUD.Spin.Image:GetWide() / 2.5, ScrH() - GHUD.Spin.Image:GetTall() - 20 )
+GHUD.Spin.Image:SetKeepAspect( false )
+GHUD.Spin.Image:SetImage( "ghud/ball.png" )
 
 /*GHUD.Weapon_Selection.Category_Labels = {
 	"Wood",

@@ -5,11 +5,6 @@
 		- Ball Spin
 			- Display ball with point to represent where it will be hit
 			- Press c to bring up panel where you can select where you want to hit the ball
-		- Club
-			- Display equipped club
-			- Club name
-		- Cart
-			- Display equipped cart
 		- Mini-Map
 			- Hole
 			- Distance to hole
@@ -54,6 +49,8 @@
 	
 	- Map
 		- Green
+		- Elements on map - paths etc
+		- Fairway
 		- Rough
 		- Water Hazards
 		- Sand Traps

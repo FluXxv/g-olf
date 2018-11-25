@@ -14,6 +14,7 @@ Inventory.PropertySheet:SetSize( Inventory:GetWide() - 2, Inventory:GetTall() - 
 Inventory.PropertySheet:SetPos( 1, 25 )
 
 local Clubs = vgui.Create( "DPanel", Inventory.PropertySheet )
+Clubs.Slots = {}
 
 Clubs.Items = vgui.Create( "DScrollPanel", Clubs )
 Clubs.Items:Dock( FILL )
@@ -37,7 +38,14 @@ local Categories = {
 	"Utilities"
 }
 
-for i = 1, 17 do
+for i = 1, 5 do
+	Clubs.Slots[i] = vgui.Create( "DPanel", Clubs )
+	Clubs.Slots[i]:SetSize( Inventory.PropertySheet:GetWide() / 10.2, 62 )
+	Clubs.Slots[i]:SetPos( Clubs.Slots[i]:GetWide() * ( i - 1 ) + ( i + i ) - 1, Inventory.PropertySheet:GetTall() - Clubs.Slots[i]:GetTall() * 1.59 )
+	Clubs.Slots[i]:SetBackgroundColor( Color( 200, 200, 200 ) )
+end
+
+/*for i = 1, 17 do
 	local Item = Clubs.Items.DIconLayout:Add( vgui.Create( "DPanel" ) )
 	Item:SetSize( 62, 62 )
 	Item:SetBackgroundColor( Color( 200, 255, 200 ) )
@@ -87,7 +95,7 @@ for i = 1, 17 do
 			Item.WasPressed = false
 		end
 	end
-end
+end*/
 
 Clubs.ModelPanelOutline = vgui.Create( "DPanel", Clubs )
 Clubs.ModelPanelOutline:SetSize( Inventory.PropertySheet:GetWide() / 2 - 18, Inventory.PropertySheet:GetTall() / 2 + 1 )

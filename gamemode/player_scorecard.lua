@@ -38,10 +38,22 @@ Scorecard.Header.Time:SetSize( Scorecard.Header:GetWide(), Scorecard.Header:GetT
 Scorecard.Header.Time:SetPos( -5, 0 )
 Scorecard.Header.Time:SetContentAlignment( 9 )
 Scorecard.Header.Time:SetDark( true )
-Scorecard.Header.Time:SetFont( "GModNotify" )
+Scorecard.Header.Time:SetFont( "Default" )
 function Scorecard.Header.Time:Think()
 	if ( Scorecard.Header.Time:GetText() ~= os.date( "%d/%m/%Y - %H:%M:%S", os.time() ) ) then
 		Scorecard.Header.Time:SetText( os.date( "%d/%m/%Y - %H:%M:%S", os.time() ) )
+	end
+end
+
+Scorecard.Header.FPS = vgui.Create( "DLabel", Scorecard.Header )
+Scorecard.Header.FPS:SetSize( Scorecard.Header:GetWide(), Scorecard.Header:GetTall() - 12 )
+Scorecard.Header.FPS:SetPos( -5, -5 )
+Scorecard.Header.FPS:SetContentAlignment( 3 )
+Scorecard.Header.FPS:SetDark( true )
+Scorecard.Header.FPS:SetFont( "Default" )
+function Scorecard.Header.FPS:Think()
+	if ( Scorecard.Header.FPS:GetValue( 2 ) ~= math.Round( 1 / RealFrameTime() ) ) then
+		Scorecard.Header.FPS:SetText( "FPS: " .. math.Round( 1 / RealFrameTime() ) )
 	end
 end
 
@@ -50,7 +62,7 @@ Scorecard.Header.Ping:SetSize( Scorecard.Header:GetWide(), Scorecard.Header:GetT
 Scorecard.Header.Ping:SetPos( -5, -5 )
 Scorecard.Header.Ping:SetContentAlignment( 3 )
 Scorecard.Header.Ping:SetDark( true )
-Scorecard.Header.Ping:SetFont( "GModNotify" )
+Scorecard.Header.Ping:SetFont( "Default" )
 function Scorecard.Header.Ping:Think()
 	if ( Scorecard.Header.Ping:GetValue( 2 ) ~= LocalPlayer():Ping() ) then
 		Scorecard.Header.Ping:SetText( "Ping: " .. LocalPlayer():Ping() )
