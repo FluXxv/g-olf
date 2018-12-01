@@ -27,20 +27,22 @@ local GHUD = {
 	Power_Meter = {
 		Bar = Material( "ghud/bar.png" ),
 	},
-	Spin = {},
+	Spin = {
+		Marker = Material( "ghud/spin_marker.png" )
+	},
 	Weapon_Selection = {},
 	Wind = {}
 }
 
-GHUD.Equipment.Image = vgui.Create( "DImage" )
-GHUD.Equipment.Image:SetSize( ScrW() / 8, ScrH() / 5 )
-GHUD.Equipment.Image:SetPos( ScrW() - GHUD.Equipment.Image:GetWide() * 1.3, ScrH() - GHUD.Equipment.Image:GetTall() - 20 )
-GHUD.Equipment.Image:SetKeepAspect( false )
-GHUD.Equipment.Image:SetImage( "ghud/equipment.png" )
+GHUD.Equipment.ImagePanel = vgui.Create( "DImage" )
+GHUD.Equipment.ImagePanel:SetSize( ScrW() / 8, ScrH() / 5 )
+GHUD.Equipment.ImagePanel:SetPos( ScrW() - GHUD.Equipment.ImagePanel:GetWide() * 1.3, ScrH() - GHUD.Equipment.ImagePanel:GetTall() - 20 )
+GHUD.Equipment.ImagePanel:SetKeepAspect( false )
+GHUD.Equipment.ImagePanel:SetImage( "ghud/equipment.png" )
 
-GHUD.Equipment.Label = vgui.Create( "DLabel", GHUD.Equipment.Image )
-GHUD.Equipment.Label:SetSize( GHUD.Equipment.Image:GetWide(), GHUD.Equipment.Image:GetTall() / 4 )
-GHUD.Equipment.Label:SetPos( 0, GHUD.Equipment.Image:GetTall() - GHUD.Equipment.Label:GetTall() + 4 )
+GHUD.Equipment.Label = vgui.Create( "DLabel", GHUD.Equipment.ImagePanel )
+GHUD.Equipment.Label:SetSize( GHUD.Equipment.ImagePanel:GetWide(), GHUD.Equipment.ImagePanel:GetTall() / 4 )
+GHUD.Equipment.Label:SetPos( 0, GHUD.Equipment.ImagePanel:GetTall() - GHUD.Equipment.Label:GetTall() + 4 )
 GHUD.Equipment.Label:SetDark( true )
 GHUD.Equipment.Label:SetFont( "GModNotify" )
 GHUD.Equipment.Label:SetContentAlignment( 5 )
@@ -61,6 +63,29 @@ function GHUD.Equipment.Label:Think()
 		end
 	end
 end
+
+GHUD.Equipment.Image = vgui.Create( "DImage", GHUD.Equipment.ImagePanel )
+GHUD.Equipment.Image:SetSize( GHUD.Equipment.ImagePanel:GetWide() - 6, GHUD.Equipment.ImagePanel:GetTall() - ( GHUD.Equipment.ImagePanel:GetTall() / 4.6 ) )
+GHUD.Equipment.Image:SetPos( 3, 3 )
+GHUD.Equipment.Image:SetKeepAspect( false )
+GHUD.Equipment.Image:SetImage( "weapons/placeholder.png" )
+/*function GHUD.Equipment.Image:Think()
+	if ( !IsValid( LocalPlayer() ) ) then return end
+	
+	if ( LocalPlayer():InVehicle() ) then
+		if ( !IsValid( LocalPlayer():GetVehicle() ) ) then return end
+		
+		if ( GHUD.Equipment.Label:GetText() ~= LocalPlayer():GetClass() ) then
+			
+		end
+	else
+		local Weapon = LocalPlayer():GetActiveWeapon() ~= NULL && LocalPlayer():GetActiveWeapon():GetClass() or "None"
+		
+		if ( GHUD.Equipment.Image:GetImage() ~= "weapons/" .. Weapon .. ".png" ) then
+			GHUD.Equipment.Image:SetImage( "weapons/" .. Weapon .. ".png" )
+		end
+	end
+end*/
 
 GHUD.Mini_Map.Panel = vgui.Create( "DPanel" )
 GHUD.Mini_Map.Panel:SetSize( ScrW() / 7, ScrH() / 4 )
@@ -351,3 +376,47 @@ local function Golf_HUD()
 	end
 end
 hook.Add( "HUDPaint", "g-olf_hud", Golf_HUD )
+
+GHUD.Spin.Panel = vgui.Create( "DImage" )
+GHUD.Spin.Panel:SetSize( ScrW() / 5, ScrH() / 2.8 )
+GHUD.Spin.Panel:Center()
+GHUD.Spin.Panel:SetKeepAspect( true )
+GHUD.Spin.Panel:SetImage( "ghud/ball_hd.png" )
+GHUD.Spin.Panel:SetVisible( false )
+GHUD.Spin.Panel:NoClipping( true )
+GHUD.Spin.Marked_Pos = Vector( GHUD.Spin.Panel:GetWide() / 2, GHUD.Spin.Panel:GetWide() / 2, 0 )
+GHUD.Spin.Panel:MakePopup()
+function GHUD.Spin.Panel:PaintOver()
+	local x, y = GHUD.Spin.Panel:CursorPos()
+	local max = GHUD.Spin.Panel:GetWide() / 2 + 2
+	local cursor_pos = Vector( GHUD.Spin.Panel:GetWide() / 2, GHUD.Spin.Panel:GetWide() / 2, 0 ):Distance( Vector( x, y, 0 ) )
+	
+	if ( cursor_pos < max ) then
+		GHUD.Spin.Panel:SetCursor( "hand" )
+	else
+		GHUD.Spin.Panel:SetCursor( "arrow" )
+	end
+	
+	surface.SetDrawColor( 255, 255, 255, 255 )
+	surface.SetMaterial( GHUD.Spin.Marker )
+	surface.DrawTexturedRect( GHUD.Spin.Marked_Pos.x - 16, GHUD.Spin.Marked_Pos.y - 16, 32, 32 )
+end
+function GHUD.Spin.Panel:OnMousePressed( keyCode )
+	if ( keyCode == MOUSE_LEFT ) then
+		local x, y = GHUD.Spin.Panel:CursorPos()
+		local max = GHUD.Spin.Panel:GetWide() / 2 + 2
+		local cursor_pos = Vector( GHUD.Spin.Panel:GetWide() / 2, GHUD.Spin.Panel:GetWide() / 2, 0 ):Distance( Vector( x, y, 0 ) )
+		
+		if ( cursor_pos < max ) then
+			GHUD.Spin.Marked_Pos = Vector( x, y, 0 )
+		end
+	end
+end
+
+concommand.Add( "+menu_context", function()
+	GHUD.Spin.Panel:SetVisible( true )
+end )
+
+concommand.Add( "-menu_context", function()
+	GHUD.Spin.Panel:SetVisible( false )
+end )

@@ -17,7 +17,7 @@ local Clubs = vgui.Create( "DPanel", Inventory.PropertySheet )
 Clubs.Slots = {}
 
 Clubs.Items = vgui.Create( "DScrollPanel", Clubs )
-Clubs.Items:Dock( FILL )
+Clubs.Items:SetSize( Inventory.PropertySheet:GetWide(), Inventory.PropertySheet:GetTall() - 64 )
 local VBar = Clubs.Items:GetVBar()
 function Clubs.Items:OnScrollbarAppear()
 	VBar:SetSize( 0, 0 )
@@ -195,7 +195,12 @@ Balls.Items.DIconLayout:SetPos( 1, 1 )
 Balls.Items.DIconLayout:SetSpaceX( 2 )
 Balls.Items.DIconLayout:SetSpaceY( 2 )
 
-for i = 1, 17 do
+Balls.Slot = vgui.Create( "DPanel", Balls )
+Balls.Slot:SetSize( Inventory.PropertySheet:GetWide() / 10.2, 62 )
+Balls.Slot:SetPos( Balls.Slot:GetWide() * 2 + 5, Inventory.PropertySheet:GetTall() - Balls.Slot:GetTall() * 1.59 )
+Balls.Slot:SetBackgroundColor( Color( 200, 200, 200 ) )
+
+/*for i = 1, 17 do
 	local Item = Balls.Items.DIconLayout:Add( vgui.Create( "DPanel" ) )
 	Item:SetSize( 62, 62 )
 	Item:SetBackgroundColor( Color( 200, 255, 200 ) )
@@ -244,7 +249,7 @@ for i = 1, 17 do
 			Item.WasPressed = false
 		end
 	end
-end
+end*/
 
 Balls.ModelPanelOutline = vgui.Create( "DPanel", Balls )
 Balls.ModelPanelOutline:SetSize( Inventory.PropertySheet:GetWide() / 2 - 18, Inventory.PropertySheet:GetTall() / 2 + 1 )

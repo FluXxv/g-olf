@@ -2,9 +2,10 @@
 
 -Base-
 	- Player HUD
+		- Equipment
+			- Custom Icons for equipment and carts
 		- Ball Spin
 			- Display ball with point to represent where it will be hit
-			- Press c to bring up panel where you can select where you want to hit the ball
 		- Mini-Map
 			- Hole
 			- Distance to hole
@@ -56,6 +57,10 @@
 		- Sand Traps
 		- Out of Bounds
 		- Wind
+		
+	- Entities
+		- Golf Ball
+			- Spin
 		
 -After Base-
 	- Models
