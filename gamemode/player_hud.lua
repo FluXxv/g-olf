@@ -100,9 +100,11 @@ function GHUD.Mini_Map.Panel:Paint( w, h )
 		if ( !IsValid( v ) ) then continue end
 		if ( v == LocalPlayer() ) then continue end
 		
+		local Player_Angle = v:InVehicle() && v:GetVehicle():LocalToWorldAngles( v:EyeAngles() ).y  or v:EyeAngles().y
+		
 		surface.SetDrawColor( 255, 255, 255, 127.5 )
 		surface.SetMaterial( GHUD.Mini_Map.Pointer )
-		surface.DrawTexturedRectRotated( ( ( w / 2 ) - ( v:GetPos().y / w ) ), ( ( h / 2 ) - ( v:GetPos().x / h ) ), 32, 32, v:EyeAngles().y )
+		surface.DrawTexturedRectRotated( ( ( w / 2 ) - ( v:GetPos().y / w ) ), ( ( h / 2 ) - ( v:GetPos().x / h ) ), 32, 32, Player_Angle )
 	end
 	
 	for k, v in pairs( ents.GetAll() ) do
@@ -118,9 +120,10 @@ function GHUD.Mini_Map.Panel:Paint( w, h )
 		end
 	end
 	
+	local LocalPlayer_Angle = LocalPlayer():InVehicle() && LocalPlayer():GetVehicle():LocalToWorldAngles( LocalPlayer():EyeAngles() ).y or LocalPlayer():EyeAngles().y
 	surface.SetDrawColor( 255, 255, 255, 255 )
-		surface.SetMaterial( GHUD.Mini_Map.Pointer )
-		surface.DrawTexturedRectRotated( ( ( w / 2 ) - ( LocalPlayer():GetPos().y / w ) ), ( ( h / 2 ) - ( LocalPlayer():GetPos().x / h ) ), 32, 32, LocalPlayer():EyeAngles().y )
+	surface.SetMaterial( GHUD.Mini_Map.Pointer )
+	surface.DrawTexturedRectRotated( ( ( w / 2 ) - ( LocalPlayer():GetPos().y / w ) ), ( ( h / 2 ) - ( LocalPlayer():GetPos().x / h ) ), 32, 32, LocalPlayer_Angle )
 end
 
 /*GHUD.Mini_Map.Map = vgui.Create( "DImage", GHUD.Mini_Map.Panel )
@@ -157,6 +160,13 @@ GHUD.Spin.Image:SetSize( ScrW() / 9, ScrW() / 9 )
 GHUD.Spin.Image:SetPos( GHUD.Spin.Image:GetWide() / 2.5, ScrH() - GHUD.Spin.Image:GetTall() - 20 )
 GHUD.Spin.Image:SetKeepAspect( false )
 GHUD.Spin.Image:SetImage( "ghud/ball.png" )
+GHUD.Spin.Image:NoClipping( true )
+GHUD.Spin.Marked_Pos = Vector( 0.5, 0.5, 0 )
+function GHUD.Spin.Image:PaintOver()
+	surface.SetDrawColor( 255, 255, 255, 255 )
+	surface.SetMaterial( GHUD.Spin.Marker )
+	surface.DrawTexturedRect( ( GHUD.Spin.Image:GetWide() * GHUD.Spin.Marked_Pos.x ) - 16, ( GHUD.Spin.Image:GetWide() * GHUD.Spin.Marked_Pos.y ) - 16, 32, 32 )
+end
 
 /*GHUD.Weapon_Selection.Category_Labels = {
 	"Wood",
@@ -384,7 +394,6 @@ GHUD.Spin.Panel:SetKeepAspect( true )
 GHUD.Spin.Panel:SetImage( "ghud/ball_hd.png" )
 GHUD.Spin.Panel:SetVisible( false )
 GHUD.Spin.Panel:NoClipping( true )
-GHUD.Spin.Marked_Pos = Vector( GHUD.Spin.Panel:GetWide() / 2, GHUD.Spin.Panel:GetWide() / 2, 0 )
 GHUD.Spin.Panel:MakePopup()
 function GHUD.Spin.Panel:PaintOver()
 	local x, y = GHUD.Spin.Panel:CursorPos()
@@ -399,7 +408,7 @@ function GHUD.Spin.Panel:PaintOver()
 	
 	surface.SetDrawColor( 255, 255, 255, 255 )
 	surface.SetMaterial( GHUD.Spin.Marker )
-	surface.DrawTexturedRect( GHUD.Spin.Marked_Pos.x - 16, GHUD.Spin.Marked_Pos.y - 16, 32, 32 )
+	surface.DrawTexturedRect( ( GHUD.Spin.Panel:GetWide() * GHUD.Spin.Marked_Pos.x ) - 16, ( GHUD.Spin.Panel:GetWide() * GHUD.Spin.Marked_Pos.y ) - 16, 32, 32 )
 end
 function GHUD.Spin.Panel:OnMousePressed( keyCode )
 	if ( keyCode == MOUSE_LEFT ) then
@@ -408,7 +417,7 @@ function GHUD.Spin.Panel:OnMousePressed( keyCode )
 		local cursor_pos = Vector( GHUD.Spin.Panel:GetWide() / 2, GHUD.Spin.Panel:GetWide() / 2, 0 ):Distance( Vector( x, y, 0 ) )
 		
 		if ( cursor_pos < max ) then
-			GHUD.Spin.Marked_Pos = Vector( x, y, 0 )
+			GHUD.Spin.Marked_Pos = Vector( x / GHUD.Spin.Panel:GetWide(), y / GHUD.Spin.Panel:GetWide(), 0 )
 		end
 	end
 end

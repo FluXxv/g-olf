@@ -15,7 +15,8 @@
 		- Wind
 			- Arrow for direction
 			- Speed
-	
+
+			
 	- Clubs
 		- Reference material: http://murdofrazer.com/golf-equipment/golf-clubs/golf-club-angles-and-distances
 		- Club stats
@@ -26,6 +27,7 @@
 		
 	- Models
 		- Flag
+
 		
 	- Inventory
 		- Clubs
@@ -35,6 +37,7 @@
 		- Balls
 			- Different ball designs
 			- Ball Colours
+			- Drag and Drop from list to single slot
 		- Carts
 			- Items
 			- Preview
@@ -66,10 +69,14 @@
 	- Models
 		- Custom tee models
 		- Custom clubs
+		- Flag moves in wind
+		- Flag hole number textures
 		
 	- Notifications
 		- Sinking the ball
-			- Hole in One
+			- Hole In One
+			- Flamingo
+			- Condor
 			- Albatross
 			- Eagle
 			- Birdie
@@ -77,11 +84,17 @@
 			- Bogey
 			- Double Bogey
 			- Triple Bogey
-			- 4x Bogey - numbers from here up to 13
+			- Quadruple Bogey
+			- 5x Bogey - numbers from here up to 13
+			- Bunker
+			- Out of Bounds
+			- Water Hazard
+			- Turkey! - 3 birdies in a row
 			
 		- Hitting
-			- Nice Hit!
-			- Nice On!
+			- Nice Shot!  		- max power drive
+			- Nice Approach!	- hit ball onto green from fairway/tee
+			- Nice Blast!		- hit ball onto green from bunker
 			
 		- Terrain
 			- Fair
@@ -89,9 +102,30 @@
 			- Rough
 			- Bunker
 			- Out of Bounds
-	
+
 	- Sounds
 		- Custom sounds
 
 	- Vehicles
 		- Carts
+		
+ ---	---	General Information
+ 			
+			Typical par distances
+			  0m - 205m	: Par 3
+			206m - 385m	: Par 4
+			386m - 550m : Par 5
+			551m +		: Par 6+
+			
+			
+			-5 Flamingo
+			-4 Condor
+			-3 Albatross
+			-2 Eagle
+			-1 Birdie
+			 0 Par
+			+1 Bogey
+			+2 Double Bogey
+			+3 Triple Bogey
+			+4 Quadruple Bogey
+			 5x Bogey - numbers from here up to 13	
