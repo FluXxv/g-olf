@@ -4,8 +4,6 @@
 	- Player HUD
 		- Equipment
 			- Custom Icons for equipment and carts
-		- Ball Spin
-			- Display ball with point to represent where it will be hit
 		- Mini-Map
 			- Hole
 			- Distance to hole
@@ -16,7 +14,6 @@
 			- Arrow for direction
 			- Speed
 
-			
 	- Clubs
 		- Reference material: http://murdofrazer.com/golf-equipment/golf-clubs/golf-club-angles-and-distances
 		- Club stats
