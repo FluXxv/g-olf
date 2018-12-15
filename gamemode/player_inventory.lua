@@ -84,7 +84,34 @@ function Clubs.Items.DIconLayout.NewItem( skin )
 	Item:SetKeepAspect( false )
 	Item:SetImage( "inventory/balls/placeholder.png" )
 	Item:Droppable( "Club" )
+	Item.DrawSelection = false
 	Item.ID = 0
+	function Item:PaintOver( w, h )
+		if ( Item.DrawSelection ) then
+			surface.SetDrawColor( Color( 0, 255, 0 ) )
+			surface.DrawOutlinedRect( 0, 0, w, h )
+		end
+	end
+	
+	function Item:DragMouseRelease( mouseCode ) // manual work-around for item selection
+		if ( self:IsDragging() ) then
+			dragndrop.Drop()
+		else
+			dragndrop.StopDragging()
+			
+			if ( Clubs.Items.Selected == nil ) then
+				self.DrawSelection = true
+				
+				Clubs.Items.Selected = self
+			elseif ( Clubs.Items.Selected ~= nil && Clubs.Items.Selected ~= self ) then
+				Clubs.Items.Selected.DrawSelection = false
+				
+				self.DrawSelection = true
+				
+				Clubs.Items.Selected = self
+			end
+		end
+	end
 end
 
 for i = 1, 10 do
@@ -184,19 +211,21 @@ local function BallDrop( self, panels, bDoDrop, Command, x, y )
 		for k, v in pairs( panels ) do
 			if ( !IsValid( v ) ) then continue end
 			
+			local pnl = v
+			
 			local Slot = v.ID == "Material" && Balls.Material_Slot or Balls.Trail_Slot
 			if ( self == Balls.Material_Slot or self == Balls.Trail_Slot ) then
 				if ( Slot ~= self ) then return end
 				
 				if ( self.Current_Item == nil ) then
-					local Item = self:Add( v )
+					local Item = self:Add( pnl )
 					Item:SetPos( 0, 0 )
 					
 					self.Current_Item = Item
 				else
 					Balls.Items.DIconLayout:Add( self.Current_Item ) // Add the slots old item back to the list
 					
-					local Item = self:Add( v )
+					local Item = self:Add( pnl )
 					Item:SetPos( 0, 0 )
 					
 					self.Current_Item = Item
@@ -204,7 +233,24 @@ local function BallDrop( self, panels, bDoDrop, Command, x, y )
 			else
 				Slot.Current_Item = nil
 				
-				self:Add( v )
+				self:Add( pnl )
+				
+				/*for k, v in pairs( self:GetChildren() ) do
+					if ( !IsValid( v ) ) then continue end
+					
+					local item_x, item_y = v:GetPos()
+					
+					if ( x < item_x + 64 && y < item_y + 64 ) then
+						local Item = self:Add( pnl )
+						Item:SetPos( v:GetPos() )
+						break
+					elseif ( k == #self:GetChildren() ) then
+						if ( x > item_x + 64 && y < item_y + 64 ) then
+							local Item = self:Add( pnl )
+							break
+						end
+					end
+				end*/
 			end
 		end
 	end
@@ -287,6 +333,7 @@ Balls.ModelPanel:SetPos( 0, 0 )
 Balls.ModelPanel:SetModel( "models/golf_ball/golf_ball.mdl" )
 Balls.ModelPanel:SetLookAng( Angle( 0, 0, 0 ) )
 Balls.ModelPanel:SetCamPos( Balls.ModelPanel.Entity:GetPos() - Vector( 8, 0, -1.5 ) )
+Balls.ModelPanel:SetColor( string.ToColor( GetConVar( "cl_golfballcolour" ):GetString() .. " 255" ) )
 
 Balls.StatsOutline = vgui.Create( "DPanel", Balls )
 Balls.StatsOutline:SetSize( Inventory.PropertySheet:GetWide() / 2 - 18, Inventory.PropertySheet:GetTall() / 2 - 38 )
@@ -297,18 +344,195 @@ Balls.Stats = vgui.Create( "DPanel", Balls.StatsOutline )
 Balls.Stats:SetSize( Balls.StatsOutline:GetWide() - 2, Balls.StatsOutline:GetTall() - 2 )
 Balls.Stats:SetPos( 1, 1 )
 
+Balls.Stats.ColourMixer = vgui.Create( "DColorMixer", Balls.Stats )
+Balls.Stats.ColourMixer:Dock( FILL )
+Balls.Stats.ColourMixer:SetPalette( false )
+Balls.Stats.ColourMixer:SetAlphaBar( false )
+Balls.Stats.ColourMixer:SetWangs( true )
+Balls.Stats.ColourMixer:SetColor( string.ToColor( GetConVar( "cl_golfballcolour" ):GetString() .. " 255" ) )
+function Balls.Stats.ColourMixer:ValueChanged( col )
+	local new_colour = col.r .. " " .. col.g .. " " .. col.b
+	
+	Balls.ModelPanel:SetColor( string.ToColor( new_colour .. " 255" ) )
+	LocalPlayer():ConCommand( "cl_golfballcolour " .. new_colour )
+end
+
 Inventory.PropertySheet:AddSheet( "Balls", Balls, "icon16/ball.png" )
 
 local Carts = vgui.Create( "DPanel", Inventory.PropertySheet )
+
+local function CartDrop( self, panels, bDoDrop, Command, x, y )
+	if ( bDoDrop ) then
+		for k, v in pairs( panels ) do
+			if ( !IsValid( v ) ) then continue end
+			
+			local pnl = v
+			
+			if ( self == Carts.Slot ) then
+				if ( self.Current_Item == nil ) then
+					local Item = self:Add( pnl )
+					Item:SetPos( 0, 0 )
+					
+					self.Current_Item = Item
+				else
+					Carts.Items.DIconLayout:Add( self.Current_Item )
+					
+					local Item = self:Add( pnl )
+					Item:SetPos( 0, 0 )
+					
+					self.Current_Item = Item
+				end
+			else
+				Carts.Slot.Current_Item = nil
+				
+				self:Add( pnl )
+			end
+		end
+	end
+end
+
+Carts.Items = vgui.Create( "DScrollPanel", Carts )
+Carts.Items:SetSize( Inventory.PropertySheet:GetWide(), Inventory.PropertySheet:GetTall() - 64 )
+local VBar = Carts.Items:GetVBar()
+function Carts.Items:OnScrollbarAppear()
+	VBar:SetSize( 0, 0 )
+end
+Carts.Items.Selected = nil
+
+Carts.Items.DIconLayout = vgui.Create( "DIconLayout", Carts.Items )
+Carts.Items.DIconLayout:SetSize( Inventory.PropertySheet:GetWide() / 2 - 1, Inventory.PropertySheet:GetTall() - 2 )
+Carts.Items.DIconLayout:SetPos( 1, 1 )
+Carts.Items.DIconLayout:Receiver( "Cart", CartDrop )
+Carts.Items.DIconLayout:SetSpaceX( 2 )
+Carts.Items.DIconLayout:SetSpaceY( 2 )
+
+function Carts.Items.DIconLayout.NewItem( skin )
+	local Item = Carts.Items.DIconLayout:Add( vgui.Create( "DImage" ) )
+	Item:SetSize( 62, 62 )
+	Item:SetKeepAspect( false )
+	Item:SetImage( "inventory/balls/placeholder.png" )
+	Item:Droppable( "Cart" )
+	Item.DrawSelection = false
+	Item.ID = 0
+	function Item:PaintOver( w, h )
+		if ( Item.DrawSelection ) then
+			surface.SetDrawColor( Color( 0, 255, 0 ) )
+			surface.DrawOutlinedRect( 0, 0, w, h )
+		end
+	end
+	
+	function Item:DragMouseRelease( mouseCode ) // manual work-around for item selection
+		if ( self:IsDragging() ) then
+			dragndrop.Drop()
+		else
+			dragndrop.StopDragging()
+			
+			if ( Carts.Items.Selected == nil ) then
+				self.DrawSelection = true
+				
+				Carts.Items.Selected = self
+			elseif ( Carts.Items.Selected ~= nil && Carts.Items.Selected ~= self ) then
+				Carts.Items.Selected.DrawSelection = false
+				
+				self.DrawSelection = true
+				
+				Carts.Items.Selected = self
+			end
+		end
+	end
+end
+
+for i = 1, 10 do
+	Carts.Items.DIconLayout.NewItem( "skree" )
+end
+
+Carts.ModelPanelOutline = vgui.Create( "DPanel", Carts )
+Carts.ModelPanelOutline:SetSize( Inventory.PropertySheet:GetWide() / 2 - 18, Inventory.PropertySheet:GetTall() / 2 + 1 )
+Carts.ModelPanelOutline:SetPos( Inventory.PropertySheet:GetWide() / 2 + 1, 1 )
+Carts.ModelPanelOutline:SetBackgroundColor( Color( 20, 20, 20 ) )
+
+Carts.ModelPanelFill = vgui.Create( "DPanel", Carts.ModelPanelOutline )
+Carts.ModelPanelFill:SetSize( Carts.ModelPanelOutline:GetWide() - 2, Carts.ModelPanelOutline:GetTall() - 2 )
+Carts.ModelPanelFill:SetPos( 1, 1 )
+
+Carts.ModelPanel = vgui.Create( "DModelPanel", Carts.ModelPanelFill )
+Carts.ModelPanel:SetSize( Carts.ModelPanelFill:GetWide(), Carts.ModelPanelFill:GetTall() )
+Carts.ModelPanel:SetPos( 0, 0 )
+Carts.ModelPanel:SetModel( "models/buggy.mdl" )
+Carts.ModelPanel:SetLookAng( Angle( 0, 0, 0 ) )
+Carts.ModelPanel:SetCamPos( Carts.ModelPanel.Entity:GetPos() - Vector( 150, 1, -30 ) )
+
+Carts.StatsOutline = vgui.Create( "DPanel", Carts )
+Carts.StatsOutline:SetSize( Inventory.PropertySheet:GetWide() / 2 - 18, Inventory.PropertySheet:GetTall() / 2 - 38 )
+Carts.StatsOutline:SetPos( Inventory.PropertySheet:GetWide() / 2 + 1, Inventory.PropertySheet:GetTall() / 2 + 1 )
+Carts.StatsOutline:SetBackgroundColor( Color( 20, 20, 20 ) )
+
+Carts.Stats = vgui.Create( "DPanel", Carts.StatsOutline )
+Carts.Stats:SetSize( Carts.StatsOutline:GetWide() - 2, Carts.StatsOutline:GetTall() - 2 )
+Carts.Stats:SetPos( 1, 1 )
+
+Carts.Stats.Header = vgui.Create( "DLabel", Carts.Stats )
+Carts.Stats.Header:SetSize( Carts.Stats:GetWide(), 20 )
+Carts.Stats.Header:SetPos( 1, 1 )
+Carts.Stats.Header:SetDark( true )
+Carts.Stats.Header:SetFont( "HudSelectionText" )
+Carts.Stats.Header:SetContentAlignment( 5 )
+Carts.Stats.Header:SetText( "Stats" )
+
+Carts.Stats.Name = vgui.Create( "DLabel", Carts.Stats )
+Carts.Stats.Name:SetSize( Carts.Stats:GetWide(), 20 )
+Carts.Stats.Name:SetPos( 1, 21 )
+Carts.Stats.Name:SetDark( true )
+Carts.Stats.Name:SetFont( "HudSelectionText" )
+Carts.Stats.Name:SetContentAlignment( 4 )
+Carts.Stats.Name:SetText( "Name: " )
+
+Carts.Stats.Description = vgui.Create( "DLabel", Carts.Stats )
+Carts.Stats.Description:SetSize( Carts.Stats:GetWide(), Carts.Stats:GetTall() / 2 )
+Carts.Stats.Description:SetPos( 1, 41 )
+Carts.Stats.Description:SetDark( true )
+Carts.Stats.Description:SetFont( "HudSelectionText" )
+Carts.Stats.Description:SetContentAlignment( 7 )
+Carts.Stats.Description:SetWrap( true )
+Carts.Stats.Description:SetText( "Description: " )
 
 Carts.Slot = vgui.Create( "DPanel", Carts )
 Carts.Slot:SetSize( Inventory.PropertySheet:GetWide() / 10.2, 62 )
 Carts.Slot:SetPos( Carts.Slot:GetWide() * 2 + 5, Inventory.PropertySheet:GetTall() - Carts.Slot:GetTall() * 1.59 )
 Carts.Slot:SetBackgroundColor( Color( 200, 200, 200 ) )
+Carts.Slot:Receiver( "Cart", CartDrop )
+Carts.Slot.Current_Item = nil
 
 Inventory.PropertySheet:AddSheet( "Carts", Carts, "icon16/new_cart.png" )
 
 local Outfit = vgui.Create( "DPanel", Inventory.PropertySheet )
+
+Outfit.ModelPanelOutline = vgui.Create( "DPanel", Outfit )
+Outfit.ModelPanelOutline:SetSize( Inventory.PropertySheet:GetWide() / 2 - 18, Inventory.PropertySheet:GetTall() - 38 )
+Outfit.ModelPanelOutline:SetPos( Inventory.PropertySheet:GetWide() / 2 + 1, 1 )
+Outfit.ModelPanelOutline:SetBackgroundColor( Color( 20, 20, 20 ) )
+
+Outfit.ModelPanelFill = vgui.Create( "DPanel", Outfit.ModelPanelOutline )
+Outfit.ModelPanelFill:SetSize( Outfit.ModelPanelOutline:GetWide() - 2, Outfit.ModelPanelOutline:GetTall() - 2 )
+Outfit.ModelPanelFill:SetPos( 1, 1 )
+
+Outfit.ModelPanel = vgui.Create( "DModelPanel", Outfit.ModelPanelFill )
+Outfit.ModelPanel:SetSize( Outfit.ModelPanelFill:GetWide(), Outfit.ModelPanelFill:GetTall() )
+Outfit.ModelPanel:SetPos( 0, 0 )
+function Outfit.ModelPanel:Think()
+	if ( !IsValid( LocalPlayer() ) ) then return end
+	
+	if ( Outfit.ModelPanel:GetModel() == nil or Outfit.ModelPanel:GetModel() ~= LocalPlayer():GetModel() ) then
+		Outfit.ModelPanel:SetModel( LocalPlayer():GetModel() )
+		Outfit.ModelPanel:SetLookAng( Angle( 0, 0, 0 ) )
+		Outfit.ModelPanel:SetCamPos( Outfit.ModelPanel.Entity:GetPos() - Vector( 45, 1, -30 ) )
+	end
+end
+
+Outfit.Slot = vgui.Create( "DPanel", Outfit )
+Outfit.Slot:SetSize( Inventory.PropertySheet:GetWide() / 10.2, 62 )
+Outfit.Slot:SetPos( Outfit.Slot:GetWide() * 2 + 5, Inventory.PropertySheet:GetTall() - Outfit.Slot:GetTall() * 1.59 )
+Outfit.Slot:SetBackgroundColor( Color( 200, 200, 200 ) )
 
 Inventory.PropertySheet:AddSheet( "Outfit", Outfit, "icon16/shirt.png" )
 

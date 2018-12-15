@@ -3,7 +3,7 @@
 -Base-
 	- Player HUD
 		- Equipment
-			- Custom Icons for equipment and carts
+			- Custom icons for equipment and carts
 		- Mini-Map
 			- Hole
 			- Distance to hole
@@ -25,27 +25,21 @@
 	- Models
 		- Flag
 
-		
 	- Inventory
 		- Clubs
-			- Items
-			- Preview
+			- Drag and Drop from list to one of 5 slots
 			- Statistics
 		- Balls
 			- Different ball designs
-			- Ball Colours
 			- Drag and Drop from list to single slot
 		- Carts
-			- Items
-			- Preview
+			- Drag and Drop from list to single slot
 			- Cart Colour
 			- Statistics
 		- Outfit
 			- Different clothes, hats etc
-			- Display
 			- Player Colour
 		- Settings
-			- Player Names
 			- Swing Direction
 	
 	- Map
@@ -63,8 +57,17 @@
 			- Spin
 		
 -After Base-
+	- Chat
+		- Emoticons + text emoticons
+		- Images
+		- Links
+		- Colours
+		- Chat Sections
+			- Global Chat
+			- Group Chat
+			- Private Chat
+	
 	- Models
-		- Custom tee models
 		- Custom clubs
 		- Flag moves in wind
 		- Flag hole number textures
@@ -99,30 +102,42 @@
 			- Rough
 			- Bunker
 			- Out of Bounds
+			
+	- Novelty
+		- Hats for the ball
+		- Custom tee models
+		- Point Shop?
 
 	- Sounds
 		- Custom sounds
+	
+	- Side Project
+		- Pool Table
+			- Model for table, cue and balls
+			- GUI
+			- Observer target = white ball
+			- Drag and release for power
 
 	- Vehicles
 		- Carts
 		
- ---	---	General Information
+- General Information
  			
-			Typical par distances
-			  0m - 205m	: Par 3
-			206m - 385m	: Par 4
-			386m - 550m : Par 5
-			551m +		: Par 6+
-			
-			
-			-5 Flamingo
-			-4 Condor
-			-3 Albatross
-			-2 Eagle
-			-1 Birdie
-			 0 Par
-			+1 Bogey
-			+2 Double Bogey
-			+3 Triple Bogey
-			+4 Quadruple Bogey
-			 5x Bogey - numbers from here up to 13	
+	Typical par distances
+	  0m - 205m	: Par 3
+	206m - 385m	: Par 4
+	386m - 550m : Par 5
+	551m +		: Par 6+
+	
+	
+	-5 Flamingo
+	-4 Condor
+	-3 Albatross
+	-2 Eagle
+	-1 Birdie
+	 0 Par
+	+1 Bogey
+	+2 Double Bogey
+	+3 Triple Bogey
+	+4 Quadruple Bogey
+	 5x Bogey - numbers from here up to 13	

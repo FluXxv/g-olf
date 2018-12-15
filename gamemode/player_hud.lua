@@ -3,7 +3,7 @@
 local CHud = {
 	"CHudAmmo",
 	"CHudBattery",
-	//"CHudChat",
+	"CHudChat",
 	"CHudHealth",
 	"CHudSecondaryAmmo",
 	//"CHudWeaponSelection"

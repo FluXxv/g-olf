@@ -12,6 +12,8 @@ AddCSLuaFile( "player_scorecard.lua" )
 include( "shared.lua" )
 include( "player.lua" )
 
+util.AddNetworkString( "g-olf_chat" )
+
 local function AddResources( golf_files, golf_directories, path )
 	if ( golf_files == nil or golf_directories == nil ) then return end
 	

@@ -55,6 +55,69 @@ function GM:PhysgunPickup( ply, ent )
 	end
 end
 
+local function Anti_Spam( ply )
+	if ( !IsValid( ply ) ) then return end
+	if ( timer.Exists( tostring( ply:SteamID() ) .. "_netCountAntiSpam" ) ) then
+		net.Start( "g-olf_chat" )
+			net.WriteString( "Please refrain from spamming chat, " .. ply:GetName() .. "." )
+		net.Send( ply )
+		
+		return true 
+	end
+	
+	if ( ply.netCount == nil ) then
+		ply.netCount = 1
+	elseif ( ply.netCount < 5 ) then
+		ply.netCount = ply.netCount + 1
+	else
+		if !( timer.Exists( tostring( ply:SteamID() ) .. "_netCountAntiSpam" ) ) then
+			timer.Create( tostring( ply:SteamID() ) .. "_netCountAntiSpam", 5, 1, function()
+				if ( !IsValid( ply ) ) then return end
+				
+				ply.netCount = 0
+			end )
+			
+			net.Start( "g-olf_chat" )
+				net.WriteString( "Please refrain from spamming chat, " .. ply:GetName() .. "." )
+			net.Send( ply )
+		end
+		
+		return true
+	end
+	
+	timer.Create( "netCountReset", 2, 1, function()
+		if ( !IsValid( ply ) ) then return end
+			
+		ply.netCount = 0
+	end )
+	
+	return false
+end
+
+function GM:PlayerSay( ply, text, teamChat )
+	if ( !IsValid( ply ) ) then return "" end
+	if ( type( text ) ~= "string" ) then return "" end
+	if ( Anti_Spam( ply ) ) then return "" end
+	
+	net.Start( "g-olf_chat" )
+		net.WriteString( ply:GetName() .. ": " .. text )
+	net.Broadcast()
+
+	return ""
+end
+
+net.Receive( "g-olf_chat", function( len, ply )
+	local text = net.ReadString()
+	
+	if ( !IsValid( ply ) ) then return end
+	if ( type( text ) ~= "string" ) then return end
+	if ( Anti_Spam( ply ) ) then return end
+	
+	net.Start( "g-olf_chat" )
+		net.WriteString( tostring( ply:GetName() .. ": " .. text ) )
+	net.Broadcast()
+end )
+
 concommand.Add( "cart", function( ply ) // debugging for golf cart
 	if ( !IsValid( ply ) ) then return end
 	
