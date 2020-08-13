@@ -49,12 +49,12 @@ function SWEP:SetupDataTables()
 	self:NetworkVar( "Int", 2, "MaxPower" )
 	
 	self:SetSideView( false )
+	self:SetHitAngle( 17 )
 	self:SetMaxPower( 2610 )
 end
 
 function SWEP:Deploy()
 	self:SetHitPower( 0 )
-	self:SetHitAngle( 0 )
 	self.Power_Up = false
 	self.Power_Down = false
 end
@@ -72,7 +72,6 @@ function SWEP:PrimaryAttack()
 			
 			if ( !IsValid( ent ) or ent:GetOwner() ~= self.Owner or ent:GetVelocity():Length() > 0 ) then
 				self:SetHitPower( 0 )
-				self:SetHitAngle( 0 )
 				self.Power_Up = false
 				self.Power_Down = false
 				
@@ -83,7 +82,8 @@ function SWEP:PrimaryAttack()
 				local physobj = ent:GetPhysicsObject()
 				
 				if IsValid( physobj ) then
-					physobj:SetVelocity( -self.Owner:GetRight() * self:GetHitPower() + Vector( 0, 0, self:GetHitAngle() ) )
+					ent:SetAngles( Angle( 0, self.Owner:EyeAngles().y, self:GetHitAngle() ) )
+					physobj:SetVelocity( -ent:GetRight() * self:GetHitPower() )
 					
 					ent.FirstHit = true
 					
@@ -92,7 +92,6 @@ function SWEP:PrimaryAttack()
 			end
 			
 			self:SetHitPower( 0 )
-			self:SetHitAngle( 0 )
 			self.Power_Up = false
 			self.Power_Down = false
 		end
@@ -121,7 +120,6 @@ function SWEP:Think()
 	if ( self.Power_Up ) then
 		if ( self:GetHitPower() < self:GetMaxPower() ) then
 			self:SetHitPower( self:GetHitPower() + 25 )
-			self:SetHitAngle( self:GetHitAngle() + 35 )
 		else
 			self.Power_Up = false
 			self.Power_Down = true
@@ -129,7 +127,6 @@ function SWEP:Think()
 	elseif ( self.Power_Down ) then
 		if ( self:GetHitPower() > 0 ) then
 			self:SetHitPower( self:GetHitPower() - 25 )
-			self:SetHitAngle( self:GetHitAngle() - 45 )
 		else
 			self.Power_Down = false
 		end

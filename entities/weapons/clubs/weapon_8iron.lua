@@ -50,11 +50,11 @@ function SWEP:SetupDataTables()
 	
 	self:SetSideView( false )
 	self:SetMaxPower( 2900 )
+	self:SetHitAngle( 44 )
 end
 
 function SWEP:Deploy()
 	self:SetHitPower( 0 )
-	self:SetHitAngle( 0 )
 	self.Power_Up = false
 	self.Power_Down = false
 end

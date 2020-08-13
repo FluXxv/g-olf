@@ -84,22 +84,24 @@ Scorecard.Course_Card_Hole.Title:SetText( "Hole" )
 
 // Course Holes
 local Hole_Row = {
-	[9] = "OUT",
-	[18] = "IN",
-	[19] = "TOTAL"
+	[10] = "OUT",
+	[20] = "IN",
+	[21] = "TOTAL"
 }
-for i = 0, 19 do
+for i = 1, 21 do
 	local Card_Width = Scorecard.Course_Card_Hole:GetWide() - ( Scorecard.Course_Card_Hole:GetWide() / 10 )
+	local pos = i - 1
+	local text = i > 9 && i - 1 or i
 	
 	local Hole = vgui.Create( "DLabel", Scorecard.Course_Card_Hole )
-	Hole:SetSize( Card_Width / 20, Scorecard.Course_Card_Hole:GetTall() )
-	Hole:SetPos( ( Scorecard.Course_Card_Hole:GetWide() / 10 ) + ( Card_Width / 20 * i ), 0 )
+	Hole:SetSize( Card_Width / 21, Scorecard.Course_Card_Hole:GetTall() )
+	Hole:SetPos( ( Scorecard.Course_Card_Hole:GetWide() / 10 ) + ( Card_Width / 21 * pos ), 0 )
 	Hole:SetDark( true )
 	Hole:SetContentAlignment( 5 )
 	Hole:SetFont( "Trebuchet18" )
 	
-	local text = Hole_Row[i] && Hole_Row[i] or i + 1
-	Hole:SetText( text )
+	local text2 = Hole_Row[i] && Hole_Row[i] or text
+	Hole:SetText( text2 )
 end
 
 Scorecard.Divider = vgui.Create( "DPanel", Scorecard ) // Divider between the player list and the course information ( placed here so it renders under the par row )
@@ -122,22 +124,24 @@ Scorecard.Course_Card_Par.Title:SetText( "Par" )
 
 // Hole Pars
 local Par_Row = {
-	[9] = 9, // map info: out
-	[18] = 9, // map_info: in
-	[19] = 18 // map_info: sum of in + out
+	[10] = 9, // map info: out
+	[20] = 9, // map_info: in
+	[21] = 18 // map_info: sum of in + out
 }
-for i = 0, 19 do
+for i = 1, 21 do
 	local card_width = Scorecard.Course_Card_Par:GetWide() - ( Scorecard.Course_Card_Par:GetWide() / 10 )
+	local pos = i - 1
+	local text = i > 9 && i - 1 or i
 	
 	local par = vgui.Create( "DLabel", Scorecard.Course_Card_Par )
-	par:SetSize( card_width / 20, Scorecard.Course_Card_Par:GetTall() )
-	par:SetPos( ( Scorecard.Course_Card_Par:GetWide() / 10 ) + ( card_width / 20 * i ), 0 )
+	par:SetSize( card_width / 21, Scorecard.Course_Card_Par:GetTall() )
+	par:SetPos( ( Scorecard.Course_Card_Par:GetWide() / 10 ) + ( card_width / 21 * pos ), 0 )
 	par:SetDark( true )
 	par:SetContentAlignment( 5 )
 	par:SetFont( "Trebuchet18" )
 	
-	local text = Par_Row[i] && Par_Row[i] or 1
-	par:SetText( text )
+	local text2 = Par_Row[i] && Par_Row[i] or text
+	par:SetText( text2 )
 end
 
 Scorecard.Players = vgui.Create( "DScrollPanel", Scorecard )
@@ -190,16 +194,17 @@ Scorecard.Players.Refresh = function()
 		ply.Name:SetText( v:GetName() )
 		
 		local Ply_Score_Row = {
-			[ 9 ] = 0,
-			[ 18 ] = 0,
-			[ 19 ] = 0,
+			[ 10 ] = 0,
+			[ 20 ] = 0,
+			[ 21 ] = 0,
 		}
-		for i = 0, 19 do
+		for i = 1, 21 do
 			local card_width = ply:GetWide() - ( ply:GetWide() / 10 )
+			local pos = i - 1
 			
 			local par = vgui.Create( "DLabel", ply )
-			par:SetSize( card_width / 20, ply:GetTall() )
-			par:SetPos( ( ply:GetWide() / 10 ) + ( card_width / 20 * i ), 0 )
+			par:SetSize( card_width / 21, ply:GetTall() )
+			par:SetPos( ( ply:GetWide() / 10 ) + ( card_width / 21 * pos ), 0 )
 			par:SetDark( true )
 			par:SetContentAlignment( 5 )
 			par:SetFont( "Trebuchet18" )

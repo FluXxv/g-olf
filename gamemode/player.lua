@@ -1,13 +1,36 @@
 /*G-Olf Player*/
 
+local function GlobalPrint( str )
+	PrintMessage( HUD_PRINTCONSOLE, str )
+	print( str )
+end
+
+function GM:PlayerConnect( name, ip )
+	if ( ip == "none" ) then return end
+	
+	GlobalPrint( name .. " is connecting." )
+	
+	net.Start( "g-olf_chat" )
+		net.WriteString( name .. " is connecting." )
+	net.Broadcast()
+end
+
 function GM:PlayerInitialSpawn( ply )
-	PrintMessage( HUD_PRINTTALK, ply:Name() .. " has joined the server." )
+	GlobalPrint( ply:Name() .. " has spawned." )
+	
+	net.Start( "g-olf_chat" )
+		net.WriteString( ply:Name() .. " has spawned." )
+	net.Broadcast()
 	
 	ply:SetModel( player_manager.TranslatePlayerModel( ply:GetInfo( "cl_playermodel" ) ) )
 end
 
 function GM:PlayerDisconnected( ply )
-	PrintMessage( HUD_PRINTTALK, ply:Name() .. " has left the server." )
+	GlobalPrint( ply:Name() .. " has left." )
+	
+	net.Start( "g-olf_chat" )
+		net.WriteString( ply:Name() .. " has left." )
+	net.Broadcast()
 end
 
 function GM:PlayerLoadout( ply )
@@ -99,6 +122,8 @@ function GM:PlayerSay( ply, text, teamChat )
 	if ( type( text ) ~= "string" ) then return "" end
 	if ( Anti_Spam( ply ) ) then return "" end
 	
+	GlobalPrint( ply:GetName() .. ": " .. text )
+	
 	net.Start( "g-olf_chat" )
 		net.WriteString( ply:GetName() .. ": " .. text )
 	net.Broadcast()
@@ -112,6 +137,8 @@ net.Receive( "g-olf_chat", function( len, ply )
 	if ( !IsValid( ply ) ) then return end
 	if ( type( text ) ~= "string" ) then return end
 	if ( Anti_Spam( ply ) ) then return end
+	
+	GlobalPrint( ply:GetName() .. ": " .. text )
 	
 	net.Start( "g-olf_chat" )
 		net.WriteString( tostring( ply:GetName() .. ": " .. text ) )
